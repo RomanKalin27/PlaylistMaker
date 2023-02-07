@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageButton
+            android:id="@+id/goBack_button"
+            android:layout_width="@dimen/arrow_side"
+            android:layout_height="@dimen/arrow_side"
+            android:layout_marginStart="@dimen/arrow_margin"
+            android:layout_marginTop="@dimen/arrow_margin"
+            android:src="@drawable/ic_arrow_back"
+            app:backgroundTint="@color/white_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/arrow_indention"
+            android:layout_marginTop="@dimen/padding_top"
+            android:fontFamily="@font/yandexsansdisplay_regular"
+            android:text="@string/settings"
+            android:textColor="@color/black_main"
+            android:textSize="@dimen/headline_text" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_indention"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_menu_button"
+            android:paddingStart="@dimen/padding_start"
+            android:paddingEnd="18dp"
+            android:background="@color/white_background"
+            app:icon="@drawable/ic_switch"
+            app:iconGravity="end"
+            android:text="@string/dark_theme"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text"
+            android:fontFamily="@font/yandexsansdisplay_regular"
+            android:gravity="center|start"
+            android:textAllCaps="false"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_menu_button"
+            android:paddingStart="@dimen/padding_start"
+            android:paddingEnd="16dp"
+            app:backgroundTint="@color/white_background"
+            android:text="@string/share_app"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text"
+            android:gravity="center|start"
+            android:fontFamily="@font/yandexsansdisplay_regular"
+            android:textAllCaps="false"
+            android:drawableEnd="@drawable/ic_share"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_menu_button"
+            android:paddingStart="@dimen/padding_start"
+            android:paddingEnd="14dp"
+            app:backgroundTint="@color/white_background"
+            android:text="@string/text_support"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text"
+            android:fontFamily="@font/yandexsansdisplay_regular"
+            android:gravity="center|start"
+            android:textAllCaps="false"
+            android:drawableEnd="@drawable/ic_support"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_menu_button"
+            android:paddingStart="@dimen/padding_start"
+            android:paddingEnd="20dp"
+            app:backgroundTint="@color/white_background"
+            android:text="@string/user_agreement"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text"
+            android:fontFamily="@font/yandexsansdisplay_regular"
+            android:gravity="center|start"
+            android:textAllCaps="false"
+            android:drawableEnd="@drawable/ic_arrow_forward"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
+
+    </LinearLayout>
+</LinearLayout>
