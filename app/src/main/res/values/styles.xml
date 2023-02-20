@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="MenuButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <item name="android:background">@drawable/round_corners</item>
+    <item name="backgroundTint">@color/white</item>
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">0dp</item>
+    <item name="android:layout_weight">1</item>
+    <item name="android:textColor">@color/black_main</item>
+    <item name="android:textSize">@dimen/headline_text</item>
+    <item name="android:fontFamily">@font/ys_display_medium</item>
+    <item name="android:textAllCaps">false</item>
+    <item name="iconPadding">@dimen/icon_padding</item>
+    <item name="iconGravity">textStart</item>
+    <item name="iconTint">@color/black_main</item>
+    <item name="android:layout_marginBottom">@dimen/space_between_btns</item>
+    </style>
+    <style name="SettingButtonStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/setting_menu_button</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="android:textSize">@dimen/text</item>
+        <item name="android:letterSpacing">.04</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/yandexsansdisplay_regular</item>
+        <item name="android:paddingHorizontal" tools:targetApi="o">@dimen/padding_horizontal</item>
+        <item name="android:gravity">center|start</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="iconGravity">end</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
+    </style>
+    <style name="BackgroundStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:orientation">vertical</item>
+        </style>
+    <style name="goBackBtnStyle">
+        <item name="android:layout_width">@dimen/arrow_side</item>
+        <item name="android:layout_height">@dimen/arrow_side</item>
+        <item name="android:layout_marginStart">@dimen/arrow_margin</item>
+        <item name="android:layout_marginTop">@dimen/arrow_margin</item>
+        <item name="android:src">@drawable/ic_arrow_back</item>
+
+        <item name="android:tint">?attr/colorSecondary</item>
+    </style>
+    <style name="headlineText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/arrow_indention</item>
+        <item name="android:layout_marginTop">@dimen/padding_top</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="android:textSize">@dimen/headline_text</item>
+    </style>
+
+</resources>
