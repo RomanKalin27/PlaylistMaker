@@ -1,33 +1,36 @@
 package com.practicum.playlistmaker
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.inputmethodservice.InputMethodService
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isGone
 
 class SearchActivity : AppCompatActivity() {
-    var searchInput: String? = null
+    var searchEditText: EditText? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         val goBackBtn = findViewById<ImageButton>(R.id.goBackBtn)
 
         goBackBtn.setOnClickListener {
-            val goBackIntent = Intent(this, MainActivity::class.java)
-            startActivity(goBackIntent)
             finish()
         }
-        val searchBar = findViewById<EditText>(R.id.searchBar)
+        val searchEditText = findViewById<EditText>(R.id.searchBar)
         val deleteBtn = findViewById<ImageButton>(R.id.deleteBtn)
-        searchBar.addTextChangedListener(object : TextWatcher {
+        deleteBtn.isGone = true
+        searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -35,15 +38,13 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                deleteBtn.isEnabled = searchBar.text.toString().trim().isNotEmpty()
-                searchInput = searchBar.text.toString()
-
+                deleteBtn.isGone = searchEditText.text.toString().trim().isEmpty()
             }
         })
 
-        deleteBtn.isEnabled = false
         deleteBtn.setOnClickListener() {
-            searchBar.text.clear()
+            searchEditText.text.clear()
+            hideKeyboard()
         }
     }
 
@@ -53,14 +54,19 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val searchBar = findViewById<EditText>(R.id.searchBar)
-        outState.putString(key_input, searchInput)
+        outState.putString(key_input, searchEditText?.text.toString())
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        val searchBar = findViewById<EditText>(R.id.searchBar)
-        searchInput = savedInstanceState.getString(key_input, "")
+        searchEditText?.setText(savedInstanceState.getString(key_input, ""))
     }
 
+    fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
 }

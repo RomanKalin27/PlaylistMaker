@@ -22,16 +22,14 @@ class SettingActivity : AppCompatActivity() {
         val goBackBtn = findViewById<ImageButton>(R.id.goBackBtn)
 
         goBackBtn.setOnClickListener {
-            val goBackIntent = Intent(this, MainActivity::class.java)
-            startActivity(goBackIntent)
             finish()
         }
-        val nightModeSwitch =findViewById<SwitchCompat>(R.id.NightModeSwitch)
+
+        val nightModeSwitch = findViewById<SwitchCompat>(R.id.NightModeSwitch)
         nightModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked){
+            if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-            else{
+            } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
         }
@@ -48,14 +46,15 @@ class SettingActivity : AppCompatActivity() {
         supportBtn.setOnClickListener {
             val emailSupport = Intent(Intent.ACTION_SENDTO)
             emailSupport.data = Uri.parse("mailto:")
-            emailSupport.putExtra(Intent.EXTRA_EMAIL,emails)
+            emailSupport.putExtra(Intent.EXTRA_EMAIL, emails)
             emailSupport.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.subject))
             emailSupport.putExtra(Intent.EXTRA_TEXT, getString(R.string.message))
             startActivity(emailSupport)
         }
         val agreementBtn = findViewById<Button>(R.id.agreementBtn)
         agreementBtn.setOnClickListener {
-            val agreement = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.userAgreementLink)))
+            val agreement =
+                Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.userAgreementLink)))
             startActivity(agreement)
         }
     }

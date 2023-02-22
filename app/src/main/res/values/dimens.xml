@@ -11,4 +11,6 @@
     <dimen name="arrow_side">16dp</dimen>
     <dimen name="arrow_margin">20dp</dimen>
     <dimen name="arrow_indention">28dp</dimen>
+    <dimen name="cross_side">20dp</dimen>
+    <dimen name="cross_margin">12dp</dimen>
 </resources>

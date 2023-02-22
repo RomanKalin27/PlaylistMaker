@@ -13,8 +13,6 @@ class LibraryActivity : AppCompatActivity() {
         val goBackBtn = findViewById<ImageButton>(R.id.goBackBtn)
 
         goBackBtn.setOnClickListener {
-            val goBackIntent = Intent(this, MainActivity::class.java)
-            startActivity(goBackIntent)
             finish()
         }
     }

@@ -33,12 +33,12 @@
         <item name="android:singleLine">true</item>
     </style>
     <style name="deleteBtn">
-        <item name="android:layout_height">20dp</item>
-        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">@dimen/cross_side</item>
+        <item name="android:layout_width">@dimen/cross_side</item>
         <item name="android:layout_gravity">end|center</item>
-        <item name="android:layout_marginTop">12dp</item>
-        <item name="android:layout_marginEnd">12dp</item>
-        <item name="android:src">@drawable/delete_btn_night</item>
+        <item name="android:layout_marginTop">@dimen/cross_margin</item>
+        <item name="android:layout_marginEnd">@dimen/cross_margin</item>
+        <item name="android:src">@drawable/ic_cross_night</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 </resources>
