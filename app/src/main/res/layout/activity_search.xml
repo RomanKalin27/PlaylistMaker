@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/BackgroundStyle"
-    >
+    style="@style/BackgroundStyle">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/goBackBtn"
-            style="@style/goBackBtnStyle"
-             />
+            style="@style/goBackBtnStyle" />
 
         <TextView
             style="@style/headlineText"
-            android:text="@string/search"
-             />
+            android:text="@string/search" />
 
 
     </LinearLayout>
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingHorizontal="@dimen/padding_horizontal"
-    >
-    <EditText
-        android:id="@+id/searchBar"
-        style="@style/searchBar"
-        />
 
-    <ImageButton
-        android:id="@+id/deleteBtn"
-        style="@style/deleteBtn"
-        />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/padding_horizontal">
+
+        <EditText
+            android:id="@+id/searchBar"
+            style="@style/searchBar" />
+
+        <ImageButton
+            android:id="@+id/deleteBtn"
+            style="@style/deleteBtn" />
     </FrameLayout>
 </LinearLayout>

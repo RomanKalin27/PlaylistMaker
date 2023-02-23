@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/BackgroundStyle"
-    >
+    style="@style/BackgroundStyle">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/goBackBtn"
-            style="@style/goBackBtnStyle"
-            />
+            style="@style/goBackBtnStyle" />
 
         <TextView
             style="@style/headlineText"
-            android:text="@string/settings"
-             />
+            android:text="@string/settings" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,35 +25,34 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/NightModeSwitch"
+            style="@style/SettingButtonStyle"
             android:text="@string/dark_theme"
             app:thumbTint="?attr/colorOnSecondary"
-            app:trackTint="?attr/colorSecondaryVariant"
-            style="@style/SettingButtonStyle"
-            />
+            app:trackTint="?attr/colorSecondaryVariant" />
 
         <Button
             android:id="@+id/shareBtn"
+            style="@style/SettingButtonStyle"
+            android:text="@string/share_app"
             app:icon="@drawable/ic_share"
             app:iconGravity="end"
-            app:iconTint="?attr/colorOnPrimary"
-            android:text="@string/share_app"
-            style="@style/SettingButtonStyle"/>
+            app:iconTint="?attr/colorOnPrimary" />
 
         <Button
             android:id="@+id/supportBtn"
+            style="@style/SettingButtonStyle"
+            android:text="@string/text_support"
             app:icon="@drawable/ic_support"
             app:iconGravity="end"
-            app:iconTint="?attr/colorOnPrimary"
-            android:text="@string/text_support"
-            style="@style/SettingButtonStyle"/>
+            app:iconTint="?attr/colorOnPrimary" />
 
         <Button
             android:id="@+id/agreementBtn"
+            style="@style/SettingButtonStyle"
+            android:text="@string/user_agreement"
             app:icon="@drawable/ic_arrow_forward"
             app:iconGravity="end"
-            app:iconTint="?attr/colorOnPrimary"
-            android:text="@string/user_agreement"
-            style="@style/SettingButtonStyle"/>
+            app:iconTint="?attr/colorOnPrimary" />
 
     </LinearLayout>
 </LinearLayout>

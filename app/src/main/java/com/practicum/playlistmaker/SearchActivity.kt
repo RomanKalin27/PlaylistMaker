@@ -19,6 +19,7 @@ import androidx.core.view.isGone
 
 class SearchActivity : AppCompatActivity() {
     var searchEditText: EditText? = null
+    var searchInput: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -39,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 deleteBtn.isGone = searchEditText.text.toString().trim().isEmpty()
+                searchInput = s.toString()
             }
         })
 
@@ -54,12 +56,13 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(key_input, searchEditText?.text.toString())
+        outState.putString(key_input, searchInput)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        searchEditText?.setText(savedInstanceState.getString(key_input, ""))
+        searchInput = savedInstanceState.getString(key_input, "")
+        searchEditText?.setText(searchInput)
     }
 
     fun hideKeyboard() {
