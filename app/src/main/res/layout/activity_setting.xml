@@ -1,36 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white_background">
+    style="@style/BackgroundStyle">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <ImageButton
-            android:id="@+id/goBack_button"
-            android:layout_width="@dimen/arrow_side"
-            android:layout_height="@dimen/arrow_side"
-            android:layout_marginStart="@dimen/arrow_margin"
-            android:layout_marginTop="@dimen/arrow_margin"
-            android:src="@drawable/ic_arrow_back"
-            app:backgroundTint="@color/white_background" />
+            android:id="@+id/goBackBtn"
+            style="@style/goBackBtnStyle" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/arrow_indention"
-            android:layout_marginTop="@dimen/padding_top"
-            android:fontFamily="@font/yandexsansdisplay_regular"
-            android:text="@string/settings"
-            android:textColor="@color/black_main"
-            android:textSize="@dimen/headline_text" />
+            style="@style/headlineText"
+            android:text="@string/settings" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,65 +24,35 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.SwitchCompat
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/setting_menu_button"
-            android:paddingStart="@dimen/padding_start"
-            android:paddingEnd="18dp"
-            android:background="@color/white_background"
-            app:icon="@drawable/ic_switch"
-            app:iconGravity="end"
+            android:id="@+id/NightModeSwitch"
+            style="@style/SettingButtonStyle"
             android:text="@string/dark_theme"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text"
-            android:fontFamily="@font/yandexsansdisplay_regular"
-            android:gravity="center|start"
-            android:textAllCaps="false"
-            />
+            app:thumbTint="?attr/colorOnSecondary"
+            app:trackTint="?attr/colorSecondaryVariant" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/setting_menu_button"
-            android:paddingStart="@dimen/padding_start"
-            android:paddingEnd="16dp"
-            app:backgroundTint="@color/white_background"
+        <Button
+            android:id="@+id/shareBtn"
+            style="@style/SettingButtonStyle"
             android:text="@string/share_app"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text"
-            android:gravity="center|start"
-            android:fontFamily="@font/yandexsansdisplay_regular"
-            android:textAllCaps="false"
-            android:drawableEnd="@drawable/ic_share"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
+            app:icon="@drawable/ic_share"
+            app:iconGravity="end"
+            app:iconTint="?attr/colorOnPrimary" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/setting_menu_button"
-            android:paddingStart="@dimen/padding_start"
-            android:paddingEnd="14dp"
-            app:backgroundTint="@color/white_background"
+        <Button
+            android:id="@+id/supportBtn"
+            style="@style/SettingButtonStyle"
             android:text="@string/text_support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text"
-            android:fontFamily="@font/yandexsansdisplay_regular"
-            android:gravity="center|start"
-            android:textAllCaps="false"
-            android:drawableEnd="@drawable/ic_support"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
+            app:icon="@drawable/ic_support"
+            app:iconGravity="end"
+            app:iconTint="?attr/colorOnPrimary" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/setting_menu_button"
-            android:paddingStart="@dimen/padding_start"
-            android:paddingEnd="20dp"
-            app:backgroundTint="@color/white_background"
+        <Button
+            android:id="@+id/agreementBtn"
+            style="@style/SettingButtonStyle"
             android:text="@string/user_agreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text"
-            android:fontFamily="@font/yandexsansdisplay_regular"
-            android:gravity="center|start"
-            android:textAllCaps="false"
-            android:drawableEnd="@drawable/ic_arrow_forward"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
+            app:icon="@drawable/ic_arrow_forward"
+            app:iconGravity="end"
+            app:iconTint="?attr/colorOnPrimary" />
 
     </LinearLayout>
 </LinearLayout>
