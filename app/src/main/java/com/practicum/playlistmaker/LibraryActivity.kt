@@ -10,11 +10,10 @@ class LibraryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_library)
-        val goBackButton = findViewById<ImageButton>(R.id.goBack_button)
+        val goBackBtn = findViewById<ImageButton>(R.id.goBackBtn)
 
-        goBackButton.setOnClickListener {
-            val goBackIntent = Intent(this, MainActivity::class.java)
-            startActivity(goBackIntent)
+        goBackBtn.setOnClickListener {
+            finish()
         }
     }
 }
