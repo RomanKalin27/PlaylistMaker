@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="padding_horizontal">16dp</dimen>
-    <dimen name="padding_top">14dp</dimen>
     <dimen name="headline_text">22sp</dimen>
     <dimen name="text">16sp</dimen>
+    <dimen name="subtext">11sp</dimen>
+    <dimen name="placeholderText">19sp</dimen>
+    <dimen name="padding_horizontal">16dp</dimen>
+    <dimen name="padding_top">14dp</dimen>
     <dimen name="setting_menu_button">61dp</dimen>
     <dimen name="top_indention">40dp</dimen>
     <dimen name="icon_padding">10dp</dimen>
@@ -13,4 +15,7 @@
     <dimen name="arrow_indention">28dp</dimen>
     <dimen name="cross_side">20dp</dimen>
     <dimen name="cross_margin">12dp</dimen>
+    <dimen name="cardview_icon_side">45dp</dimen>
+    <dimen name="dot_side">3dp</dimen>
+    <dimen name="dot_margin">6dp</dimen>
 </resources>

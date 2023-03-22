@@ -31,6 +31,7 @@
         <item name="android:textCursorDrawable">@drawable/text_cursor</item>
         <item name="android:textColorHint">@color/black_main</item>
         <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">"actionDone"</item>
     </style>
     <style name="deleteBtn">
         <item name="android:layout_height">@dimen/cross_side</item>
@@ -41,4 +42,5 @@
         <item name="android:src">@drawable/ic_cross_night</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
+
 </resources>
