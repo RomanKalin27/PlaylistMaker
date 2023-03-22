@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-<<<<<<< HEAD
     android:layout_height="@dimen/setting_menu_button">
 
-<RelativeLayout
-=======
-    android:layout_height="@dimen/setting_menu_button"
-
-    >
-
     <RelativeLayout
->>>>>>> origin/review
         style="@style/BackgroundStyle"
         android:paddingHorizontal="12dp"
         android:paddingTop="8dp">
