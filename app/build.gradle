@@ -29,6 +29,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    sourceSets {
+        main {
+            resources {
+                srcDirs 'src\\main\\resources', 'src\\main\\resources\\drawable'
+            }
+        }
+    }
 }
 
 dependencies {

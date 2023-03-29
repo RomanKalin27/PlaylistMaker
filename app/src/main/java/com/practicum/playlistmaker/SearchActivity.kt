@@ -10,7 +10,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,38 +20,55 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
-    private val base_url = "https://itunes.apple.com/"
+    private val baseUrl = "https://itunes.apple.com/"
     private lateinit var searchInput: String
-    private lateinit var searchEditText: EditText
-    private lateinit var placeholder: LinearLayout
-    private lateinit var placeholderImage: ImageView
-    private lateinit var placeholderText: TextView
-    private lateinit var placeholderExtraText: TextView
-    private lateinit var refreshBtn: Button
-    private lateinit var goBackBtn: ImageButton
-    private lateinit var deleteBtn: ImageButton
-    private lateinit var recyclerView: RecyclerView
-    private val adapter = Adapter()
+    private val trackAdapter = TrackAdapter()
     private val trackList = ArrayList<Track>()
+    private val searchEditText: EditText by lazy {
+        findViewById(R.id.searchBar)
+    }
+    private val goBackBtn: ImageButton by lazy {
+        findViewById(R.id.goBackBtn)
+    }
+    private val deleteBtn: ImageButton by lazy {
+        findViewById(R.id.deleteBtn)
+    }
+    private val recyclerView: RecyclerView by lazy {
+        findViewById(R.id.recycler_view)
+    }
+    private val placeholder: LinearLayout by lazy {
+        findViewById(R.id.placeholder)
+    }
+    private val placeholderText: TextView by lazy {
+        findViewById(R.id.placeholderText)
+    }
+    private val placeholderExtraText: TextView by lazy {
+        findViewById(R.id.placeholderExtraText)
+    }
+    private val placeholderImage: ImageView by lazy {
+        findViewById(R.id.placeholderImage)
+    }
+    private val refreshBtn: Button by lazy {
+        findViewById(R.id.refresh_btn)
+    }
     private val retrofit = Retrofit.Builder()
-        .baseUrl(base_url)
+        .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    private val itunesService = retrofit.create(TrackInterface::class.java)
+    private val itunesService = retrofit.create(TrackApi::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        searchEditText = findViewById(R.id.searchBar)
-        goBackBtn = findViewById(R.id.goBackBtn)
         goBackBtn.setOnClickListener {
             finish()
         }
-        deleteBtn = findViewById(R.id.deleteBtn)
         deleteBtn.isGone = true
         deleteBtn.setOnClickListener() {
             searchEditText.text.clear()
             hideKeyboard()
             trackList.clear()
+            trackAdapter.notifyDataSetChanged()
         }
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -76,11 +92,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun getTrack(input: String) {
-        placeholder = findViewById(R.id.placeholder)
+        trackAdapter.trackList = trackList
+        recyclerView.adapter = trackAdapter
         placeholder.visibility = View.GONE
-        recyclerView = findViewById(R.id.recycler_view)
-        adapter.trackList = trackList
-        recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         if (input.isNotEmpty()) {
             itunesService.search(input).enqueue(object : Callback<TrackResponse?> {
@@ -91,10 +105,10 @@ class SearchActivity : AppCompatActivity() {
                     trackList.clear()
                     if (response.body()?.results?.isNotEmpty() == true) {
                         trackList.addAll(response.body()?.results!!)
-                        adapter.notifyDataSetChanged()
+                        trackAdapter.notifyDataSetChanged()
                     } else {
                         showPlaceholder(getString(R.string.nothing_found), "", "")
-                        adapter.notifyDataSetChanged()
+                        trackAdapter.notifyDataSetChanged()
                     }
                 }
 
@@ -110,12 +124,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showPlaceholder(text: String, extraText: String, input: String) {
-        placeholderImage = findViewById(R.id.placeholderImage)
-        placeholderText = findViewById(R.id.placeholderText)
-        placeholderExtraText = findViewById(R.id.placeholderExtraText)
-        placeholder = findViewById(R.id.placeholder)
-        refreshBtn = findViewById(R.id.refresh_btn)
-        val mode = baseContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         trackList.clear()
         placeholder.visibility = View.VISIBLE
         refreshBtn.setOnClickListener {
@@ -125,24 +133,10 @@ class SearchActivity : AppCompatActivity() {
         placeholderExtraText.text = extraText
         if (extraText.isEmpty()) {
             refreshBtn.isGone = true
-            when (mode) {
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    placeholderImage.setBackgroundResource(R.drawable.ic_nothing_found_night)
-                }
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    placeholderImage.setBackgroundResource(R.drawable.ic_nothing_found_day)
-                }
-            }
+            placeholderImage.setBackgroundResource(R.drawable.ic_nothing_found)
         } else {
             refreshBtn.isGone = false
-            when (mode) {
-                Configuration.UI_MODE_NIGHT_YES -> {
-                    placeholderImage.setBackgroundResource(R.drawable.ic_no_connection_night)
-                }
-                Configuration.UI_MODE_NIGHT_NO -> {
-                    placeholderImage.setBackgroundResource(R.drawable.ic_no_connection_day)
-                }
-            }
+            placeholderImage.setBackgroundResource(R.drawable.ic_no_connection)
         }
     }
 
@@ -157,7 +151,7 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setText(searchInput)
     }
 
-    fun hideKeyboard() {
+    private fun hideKeyboard() {
         val view = this.currentFocus
         if (view != null) {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
