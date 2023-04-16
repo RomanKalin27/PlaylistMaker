@@ -6,7 +6,7 @@
         <item name="colorPrimaryVariant">@color/blue</item>
         <item name="colorOnPrimary">@color/gray</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondary">@color/black_main</item>
         <item name="colorSecondaryVariant">@color/light_gray</item>
         <item name="colorOnSecondary">@color/gray</item>
         <!-- Status bar color. -->
@@ -31,6 +31,8 @@
         <item name="android:textCursorDrawable">@drawable/text_cursor</item>
         <item name="android:textColorHint">@color/gray</item>
         <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">"actionDone"</item>
+
     </style>
     <style name="deleteBtn">
         <item name="android:layout_height">@dimen/cross_side</item>
@@ -42,4 +44,5 @@
         <item name="android:background">?attr/selectableItemBackground</item>
 
     </style>
+
 </resources>
