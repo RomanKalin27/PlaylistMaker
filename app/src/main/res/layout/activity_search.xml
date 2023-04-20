@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/BackgroundStyle">
+    style="@style/BackgroundStyle"
+    android:gravity="center|top">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,9 +40,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        tools:listitem="@layout/track_card"
-
-        />
+        android:visibility="gone"
+        tools:listitem="@layout/track_card" />
 
     <LinearLayout
         android:id="@+id/placeholder"
@@ -70,17 +70,46 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/refresh_btn"
+            style="@style/roundBtn"
             android:layout_width="90dp"
-            android:layout_height="36dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/round_corners"
-            android:backgroundTint="?attr/colorSecondary"
-            android:fontFamily="@font/ys_display_medium"
-            android:text="@string/refresh"
-            android:textAllCaps="false"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="14sp" />
+            android:text="@string/refresh" />
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_history"
+        style="@style/BackgroundStyle">
+
+        <TextView
+            android:id="@+id/search_history_text"
+            style="@style/placeholderText"
+            android:paddingTop="50dp"
+            android:text="@string/search_history"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/history_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintHeight_max="540dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_history_text"
+            tools:listitem="@layout/track_card" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/clear_history"
+            style="@style/roundBtn"
+            android:layout_width="148dp"
+            android:text="@string/clear_history"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/history_recycler" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

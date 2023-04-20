@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
@@ -24,15 +25,21 @@ class SettingActivity : AppCompatActivity() {
         goBackBtn.setOnClickListener {
             finish()
         }
-
         val nightModeSwitch = findViewById<SwitchCompat>(R.id.NightModeSwitch)
+        if (App.sharedPreferences.getBoolean("MODE", false)) {
+            nightModeSwitch.isChecked = true
+        }
         nightModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            App.sharedPreferences.edit()
+                .putBoolean("MODE", nightModeSwitch.isChecked)
+                .apply()
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
         }
+
 
         val shareBtn = findViewById<Button>(R.id.shareBtn)
         shareBtn.setOnClickListener {
