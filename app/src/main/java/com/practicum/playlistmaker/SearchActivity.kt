@@ -13,6 +13,7 @@ import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -84,6 +85,7 @@ class SearchActivity : AppCompatActivity() {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
         }
+        if(App.historyList.isEmpty()) searchHistory.isVisible = false
         historyRecycler.adapter = historyAdapter
         historyRecycler.layoutManager = LinearLayoutManager(applicationContext)
         clearHistory.setOnClickListener() {
@@ -92,6 +94,7 @@ class SearchActivity : AppCompatActivity() {
                 .remove(NEW_TRACK)
                 .apply()
             historyAdapter.notifyDataSetChanged()
+            searchHistory.isVisible = false
         }
 
         searchEditText.addTextChangedListener(object : TextWatcher {
@@ -104,10 +107,10 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchInput = s.toString()
                 if (searchEditText.hasFocus() && searchInput.isEmpty()) {
-                    searchHistory.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
+                    searchHistory.isVisible = true
+                    recyclerView.isVisible = false
                 } else {
-                    searchHistory.visibility = View.GONE
+                    searchHistory.isVisible = false
                 }
                 historyAdapter.notifyDataSetChanged()
                 deleteBtn.isGone = searchEditText.text.toString().trim().isEmpty()

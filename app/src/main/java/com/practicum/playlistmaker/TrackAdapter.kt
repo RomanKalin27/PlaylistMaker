@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,8 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
             holder.saveTrack(trackList[position])
+            //val trackIntent = Intent(it.context, TrackActivity::class.java)
+            //it.context.startActivity(trackIntent)
         }
     }
 
@@ -79,9 +82,13 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
                 historyStrings.add(createJsonFromTrack(it))
             }
             App.sharedPreferences.edit()
+                .putString("trackName",item.trackName)
+                .putString("artistName",item.artistName)
+                .putString("artwork", item.artworkUrl100)
                 .putStringSet(SearchActivity.NEW_TRACK, historyStrings)
                 .apply()
             HistoryAdapter().notifyItemInserted(0)
+
         }
 
         private fun createJsonFromTrack(track: Track): String {

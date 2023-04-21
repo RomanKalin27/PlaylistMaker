@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,8 @@ class HistoryAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
         holder.bind(historyList[position])
         holder.itemView.setOnClickListener {
             holder.saveTrack(historyList[position])
+            val trackIntent = Intent(it.context, TrackActivity::class.java)
+            it.context.startActivity(trackIntent)
         }
     }
 
