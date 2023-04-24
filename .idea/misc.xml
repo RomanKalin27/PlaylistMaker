@@ -16,6 +16,8 @@
         <entry key="..\:/Projects/PlaylistMaker-3837eefbcc02fa5d669d1b56463ef8304a498c92/PlaylistMaker-3837eefbcc02fa5d669d1b56463ef8304a498c92/app/src/main/res/layout/activity_search.xml" value="0.20416666666666666" />
         <entry key="..\:/Projects/PlaylistMaker-3837eefbcc02fa5d669d1b56463ef8304a498c92/PlaylistMaker-3837eefbcc02fa5d669d1b56463ef8304a498c92/app/src/main/res/layout/activity_setting.xml" value="0.1" />
         <entry key="..\:/Projects/PlaylistMaker-3837eefbcc02fa5d669d1b56463ef8304a498c92/PlaylistMaker-3837eefbcc02fa5d669d1b56463ef8304a498c92/app/src/main/res/layout/cardview.xml" value="0.20416666666666666" />
+        <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable-night/ic_placeholder.xml" value="0.123" />
+        <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable-night/ic_placeholdern.xml" value="0.121" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.154" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/delete_btn.xml" value="0.1" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_arrow_back.xml" value="0.1" />
@@ -28,8 +30,12 @@
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_cross_on.xml" value="0.1" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_cross_on_day.xml" value="0.1" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_dot.xml" value="0.1" />
+        <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_l.xml" value="0.154" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.154" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_library.xml" value="0.154" />
+        <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_nothing_found.xml" value="0.154" />
+        <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_placehoder.xml" value="0.123" />
+        <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_placehoder_day.xml" value="0.123" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_placeholder.xml" value="0.1" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_search.xml" value="0.1" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/drawable/ic_search2.xml" value="0.1" />
@@ -42,7 +48,9 @@
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/layout/activity_search.xml" value="0.25" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/layout/activity_seeting.xml" value="0.17074275362318841" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/layout/activity_setting.xml" value="0.33" />
+        <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/layout/activity_track.xml" value="0.1109375" />
         <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/layout/cardview.xml" value="0.22" />
+        <entry key="..\:/Projects/PlaylistMaker2/app/src/main/res/layout/track_card.xml" value="0.1" />
       </map>
     </option>
   </component>

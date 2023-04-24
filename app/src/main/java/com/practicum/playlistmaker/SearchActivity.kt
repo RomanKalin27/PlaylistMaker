@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
-import android.content.res.Configuration
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -10,20 +10,26 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class SearchActivity : AppCompatActivity() {
     private val baseUrl = "https://itunes.apple.com/"
     private lateinit var searchInput: String
     private val trackAdapter = TrackAdapter()
     private val trackList = ArrayList<Track>()
+    private val historyAdapter = HistoryAdapter()
     private val searchEditText: EditText by lazy {
         findViewById(R.id.searchBar)
     }
@@ -35,6 +41,15 @@ class SearchActivity : AppCompatActivity() {
     }
     private val recyclerView: RecyclerView by lazy {
         findViewById(R.id.recycler_view)
+    }
+    private val historyRecycler: RecyclerView by lazy {
+        findViewById(R.id.history_recycler)
+    }
+    private val searchHistory: ConstraintLayout by lazy {
+        findViewById(R.id.search_history)
+    }
+    private val clearHistory: Button by lazy {
+        findViewById(R.id.clear_history)
     }
     private val placeholder: LinearLayout by lazy {
         findViewById(R.id.placeholder)
@@ -70,6 +85,18 @@ class SearchActivity : AppCompatActivity() {
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
         }
+        if(App.historyList.isEmpty()) searchHistory.isVisible = false
+        historyRecycler.adapter = historyAdapter
+        historyRecycler.layoutManager = LinearLayoutManager(applicationContext)
+        clearHistory.setOnClickListener() {
+            App.historyList.clear()
+            App.sharedPreferences.edit()
+                .remove(NEW_TRACK)
+                .apply()
+            historyAdapter.notifyDataSetChanged()
+            searchHistory.isVisible = false
+        }
+
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
@@ -78,12 +105,21 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                deleteBtn.isGone = searchEditText.text.toString().trim().isEmpty()
                 searchInput = s.toString()
+                if (searchEditText.hasFocus() && searchInput.isEmpty()) {
+                    searchHistory.isVisible = true
+                    recyclerView.isVisible = false
+                } else {
+                    searchHistory.isVisible = false
+                }
+                historyAdapter.notifyDataSetChanged()
+                deleteBtn.isGone = searchEditText.text.toString().trim().isEmpty()
+
             }
         })
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                recyclerView.visibility = View.VISIBLE
                 getTrack(searchInput)
                 true
             }
@@ -161,5 +197,6 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val key_input = "key_input"
+        const val NEW_TRACK = "NEW_TRACK"
     }
 }
