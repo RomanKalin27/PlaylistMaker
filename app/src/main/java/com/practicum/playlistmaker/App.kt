@@ -15,7 +15,7 @@ class App : Application() {
         sharedPreferences.getStringSet(SearchActivity.NEW_TRACK, null)?.forEach {
             historyList.add(0, createTrackFromJson(it))
         }
-        if (sharedPreferences.getBoolean("MODE", false)) {
+        if (sharedPreferences.getBoolean(MODE, false)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
 
@@ -27,7 +27,7 @@ class App : Application() {
         lateinit var historyList: ArrayList<Track>
             private set
         const val SEARCH_HISTORY = "SEARCH_HISTORY"
-
+        const val MODE = "MODE"
     }
 
     private fun createTrackFromJson(json: String): Track {

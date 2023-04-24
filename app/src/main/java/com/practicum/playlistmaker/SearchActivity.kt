@@ -26,12 +26,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     private val baseUrl = "https://itunes.apple.com/"
-    private lateinit var searchInput: String
     private val trackAdapter = TrackAdapter()
+    private val historyAdapter = TrackAdapter()
     private val trackList = ArrayList<Track>()
-    private val historyAdapter = HistoryAdapter()
+    private lateinit var listener: SharedPreferences.OnSharedPreferenceChangeListener
     private val searchEditText: EditText by lazy {
         findViewById(R.id.searchBar)
+    }
+    private val searchInput: String by lazy {
+        searchEditText.text.toString()
     }
     private val goBackBtn: ImageButton by lazy {
         findViewById(R.id.goBackBtn)
@@ -83,9 +86,9 @@ class SearchActivity : AppCompatActivity() {
             searchEditText.text.clear()
             hideKeyboard()
             trackList.clear()
-            trackAdapter.notifyDataSetChanged()
         }
-        if(App.historyList.isEmpty()) searchHistory.isVisible = false
+        if (App.historyList.isEmpty()) searchHistory.isVisible = false
+        historyAdapter.trackList = App.historyList
         historyRecycler.adapter = historyAdapter
         historyRecycler.layoutManager = LinearLayoutManager(applicationContext)
         clearHistory.setOnClickListener() {
@@ -93,7 +96,6 @@ class SearchActivity : AppCompatActivity() {
             App.sharedPreferences.edit()
                 .remove(NEW_TRACK)
                 .apply()
-            historyAdapter.notifyDataSetChanged()
             searchHistory.isVisible = false
         }
 
@@ -105,18 +107,21 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchInput = s.toString()
-                if (searchEditText.hasFocus() && searchInput.isEmpty()) {
+                if (searchEditText.hasFocus() && searchEditText.text.isEmpty() && App.historyList.isNotEmpty()) {
                     searchHistory.isVisible = true
                     recyclerView.isVisible = false
                 } else {
                     searchHistory.isVisible = false
                 }
-                historyAdapter.notifyDataSetChanged()
                 deleteBtn.isGone = searchEditText.text.toString().trim().isEmpty()
 
             }
         })
+        listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            historyAdapter.notifyDataSetChanged()
+        }
+
+        App.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 recyclerView.visibility = View.VISIBLE
@@ -176,6 +181,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(key_input, searchInput)
@@ -183,8 +189,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        searchInput = savedInstanceState.getString(key_input, "")
-        searchEditText.setText(searchInput)
+        searchEditText.setText(savedInstanceState.getString(key_input, ""))
     }
 
     private fun hideKeyboard() {
@@ -198,5 +203,13 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val key_input = "key_input"
         const val NEW_TRACK = "NEW_TRACK"
+        const val TRACK_NAME = "TRACK_NAME"
+        const val ARTIST_NAME = "ARTIST_NAME"
+        const val ARTWORK = "ARTWORK"
+        const val TRACK_TIME = "TRACK_TIME"
+        const val COLLECTION_NAME = "COLLECTION_NAME"
+        const val RELEASE_DATE = "RELEASE_DATE"
+        const val PRIMARY_GENRE_NAME = "PRIMARY_GENRE_NAME"
+        const val COUNTRY = "COUNTRY"
     }
 }

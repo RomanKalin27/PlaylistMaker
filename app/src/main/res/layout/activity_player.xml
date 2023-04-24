@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/BackgroundStyle"
+    tools:context=".PlayerActivity">
+
+    <ImageButton
+        android:id="@+id/goBackBtn"
+        style="@style/goBackBtnStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/artwork"
+        android:layout_width="@dimen/artwork_side"
+        android:layout_height="@dimen/artwork_side"
+        android:layout_marginTop="82dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/trackName"
+        style="@style/headlineText"
+        android:layout_marginStart="@dimen/zero"
+        android:layout_marginTop="@dimen/margin24"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintStart_toStartOf="@+id/artwork"
+        app:layout_constraintTop_toBottomOf="@+id/artwork"
+        app:layout_constraintWidth_max="@dimen/artwork_side" />
+
+    <TextView
+        android:id="@+id/artistName"
+        style="@style/headlineText"
+        android:layout_marginStart="@dimen/zero"
+        android:layout_marginTop="@dimen/margin12"
+        android:textSize="@dimen/roundBtn_text"
+        app:layout_constraintStart_toStartOf="@+id/artwork"
+        app:layout_constraintTop_toBottomOf="@+id/trackName" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/playBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        app:backgroundTint="?attr/colorPrimary"
+        app:fabCustomSize="84dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/artistName"
+        app:maxImageSize="100dp"
+        app:srcCompat="@drawable/ic_play"
+        app:tint="?attr/colorSecondary" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addBtn"
+        style="@style/playerSideBtn"
+        android:layout_marginEnd="@dimen/margin64"
+        app:layout_constraintEnd_toStartOf="@+id/playBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/artistName"
+        app:srcCompat="@drawable/ic_add" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/favoriteBtn"
+        style="@style/playerSideBtn"
+        android:layout_marginStart="@dimen/margin64"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/playBtn"
+        app:layout_constraintTop_toBottomOf="@+id/artistName"
+        app:srcCompat="@drawable/ic_favorite" />
+
+    <TextView
+        android:id="@+id/timePlayed"
+        style="@style/playerText"
+        android:layout_marginTop="@dimen/margin12"
+        android:gravity="top"
+        android:text="@string/time"
+        android:textSize="@dimen/roundBtn_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playBtn" />
+
+    <TextView
+        android:id="@+id/lenght"
+        style="@style/playerText"
+        android:text="@string/lenght"
+        android:textColor="@color/gray"
+        app:layout_constraintBottom_toTopOf="@+id/album"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/trackTime"
+        style="@style/playerText"
+        app:layout_constraintBottom_toTopOf="@+id/collectionName"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/album"
+        style="@style/playerText"
+        android:text="@string/album"
+        android:textColor="@color/gray"
+        app:layout_constraintBottom_toTopOf="@+id/year"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/collectionName"
+        style="@style/playerText"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/releaseDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_max="220dp" />
+
+    <TextView
+        android:id="@+id/year"
+        style="@style/playerText"
+        android:text="@string/year"
+        android:textColor="@color/gray"
+        app:layout_constraintBottom_toTopOf="@+id/genre"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/releaseDate"
+        style="@style/playerText"
+        app:layout_constraintBottom_toTopOf="@+id/primaryGenreName"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/genre"
+        style="@style/playerText"
+        android:text="@string/genre"
+        android:textColor="@color/gray"
+        app:layout_constraintBottom_toTopOf="@+id/artistCountry"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/primaryGenreName"
+        style="@style/playerText"
+        app:layout_constraintBottom_toTopOf="@+id/country"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/artistCountry"
+        style="@style/playerText"
+        android:text="@string/country"
+        android:textColor="@color/gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/country"
+        style="@style/playerText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

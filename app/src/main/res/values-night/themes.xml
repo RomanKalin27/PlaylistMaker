@@ -37,10 +37,9 @@
         <item name="android:layout_height">@dimen/cross_side</item>
         <item name="android:layout_width">@dimen/cross_side</item>
         <item name="android:layout_gravity">end|center</item>
-        <item name="android:layout_marginTop">@dimen/cross_margin</item>
-        <item name="android:layout_marginEnd">@dimen/cross_margin</item>
+        <item name="android:layout_marginTop">@dimen/margin12</item>
+        <item name="android:layout_marginEnd">@dimen/margin12</item>
         <item name="android:src">@drawable/ic_cross_night</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
-
 </resources>

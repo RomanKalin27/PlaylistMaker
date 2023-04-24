@@ -26,12 +26,12 @@ class SettingActivity : AppCompatActivity() {
             finish()
         }
         val nightModeSwitch = findViewById<SwitchCompat>(R.id.NightModeSwitch)
-        if (App.sharedPreferences.getBoolean("MODE", false)) {
+        if (App.sharedPreferences.getBoolean(App.MODE, false)) {
             nightModeSwitch.isChecked = true
         }
         nightModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             App.sharedPreferences.edit()
-                .putBoolean("MODE", nightModeSwitch.isChecked)
+                .putBoolean(App.MODE, nightModeSwitch.isChecked)
                 .apply()
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
