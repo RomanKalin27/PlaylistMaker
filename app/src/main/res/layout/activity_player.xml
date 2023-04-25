@@ -13,9 +13,12 @@
 
     <ImageView
         android:id="@+id/artwork"
-        android:layout_width="@dimen/artwork_side"
-        android:layout_height="@dimen/artwork_side"
+        android:layout_width="@dimen/zero"
+        android:layout_height="@dimen/zero"
+        android:layout_marginHorizontal="@dimen/margin24"
         android:layout_marginTop="82dp"
+        android:layout_marginBottom="@dimen/margin24"
+        app:layout_constraintBottom_toTopOf="@+id/trackName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,64 +27,65 @@
         android:id="@+id/trackName"
         style="@style/headlineText"
         android:layout_marginStart="@dimen/zero"
-        android:layout_marginTop="@dimen/margin24"
+        android:layout_marginBottom="@dimen/margin12"
         android:ellipsize="end"
         android:maxLines="1"
-        app:layout_constraintStart_toStartOf="@+id/artwork"
-        app:layout_constraintTop_toBottomOf="@+id/artwork"
-        app:layout_constraintWidth_max="@dimen/artwork_side" />
+        android:paddingHorizontal="@dimen/margin24"
+        app:layout_constraintBottom_toTopOf="@+id/artistName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0"/>
 
     <TextView
         android:id="@+id/artistName"
         style="@style/headlineText"
         android:layout_marginStart="@dimen/zero"
-        android:layout_marginTop="@dimen/margin12"
+        android:layout_marginBottom="38dp"
         android:textSize="@dimen/roundBtn_text"
-        app:layout_constraintStart_toStartOf="@+id/artwork"
-        app:layout_constraintTop_toBottomOf="@+id/trackName" />
+        app:layout_constraintBottom_toTopOf="@+id/playBtn"
+        app:layout_constraintStart_toStartOf="@+id/artwork" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/playBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="38dp"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:layout_marginBottom="@dimen/margin12"
+        android:gravity="center|center"
         app:backgroundTint="?attr/colorPrimary"
-        app:fabCustomSize="84dp"
+        app:layout_constraintBottom_toTopOf="@+id/timePlayed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/artistName"
-        app:maxImageSize="100dp"
         app:srcCompat="@drawable/ic_play"
         app:tint="?attr/colorSecondary" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/addBtn"
         style="@style/playerSideBtn"
         android:layout_marginEnd="@dimen/margin64"
+        app:layout_constraintBottom_toTopOf="@+id/timePlayed"
         app:layout_constraintEnd_toStartOf="@+id/playBtn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/artistName"
         app:srcCompat="@drawable/ic_add" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/favoriteBtn"
         style="@style/playerSideBtn"
         android:layout_marginStart="@dimen/margin64"
+        app:layout_constraintBottom_toTopOf="@+id/timePlayed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/playBtn"
-        app:layout_constraintTop_toBottomOf="@+id/artistName"
         app:srcCompat="@drawable/ic_favorite" />
 
     <TextView
         android:id="@+id/timePlayed"
         style="@style/playerText"
-        android:layout_marginTop="@dimen/margin12"
-        android:gravity="top"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin30"
         android:text="@string/time"
         android:textSize="@dimen/roundBtn_text"
+        app:layout_constraintBottom_toTopOf="@+id/lenght"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playBtn" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/lenght"

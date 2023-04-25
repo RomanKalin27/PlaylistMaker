@@ -42,8 +42,8 @@
         <style name="goBackBtnStyle">
             <item name="android:layout_width">@dimen/arrow_side</item>
             <item name="android:layout_height">@dimen/arrow_side</item>
-            <item name="android:layout_marginStart">@dimen/arrow_margin</item>
-            <item name="android:layout_marginTop">@dimen/arrow_margin</item>
+            <item name="android:layout_marginStart">@dimen/margin20</item>
+            <item name="android:layout_marginTop">@dimen/margin20</item>
             <item name="android:src">@drawable/ic_arrow_back</item>
             <item name="android:tint">?attr/colorSecondary</item>
         </style>
@@ -100,14 +100,11 @@
         </style>
 
         <style name="playerSideBtn">
-            <item name="android:layout_width">wrap_content</item>
-            <item name="android:layout_height">wrap_content</item>
-            <item name="fabCustomSize">64dp</item>
-            <item name="android:layout_marginTop">54dp</item>
+            <item name="android:layout_width">51dp</item>
+            <item name="android:layout_height">51dp</item>
+            <item name="android:background">@drawable/circle</item>
+            <item name="android:layout_marginBottom">29dp</item>
             <item name="backgroundTint">@color/trans.gray</item>
             <item name="tint">@color/white</item>
-            <item name="maxImageSize">38dp</item>
-            <item name="elevation">0dp</item>
-            <item name="pressedTranslationZ">0dp</item>
         </style>
 </resources>

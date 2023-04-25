@@ -13,7 +13,7 @@
     <dimen name="icon_padding">10dp</dimen>
     <dimen name="space_between_btns">16dp</dimen>
     <dimen name="arrow_side">16dp</dimen>
-    <dimen name="arrow_margin">20dp</dimen>
+    <dimen name="margin20">20dp</dimen>
     <dimen name="arrow_indention">28dp</dimen>
     <dimen name="cross_side">20dp</dimen>
     <dimen name="margin12">12dp</dimen>
@@ -22,6 +22,7 @@
     <dimen name="dot_margin">6dp</dimen>
     <dimen name="roundBtn_height">36dp</dimen>
     <dimen name="margin24">24dp</dimen>
+    <dimen name="margin30">30dp</dimen>
     <dimen name="zero">0dp</dimen>
     <dimen name="artwork_side">312dp</dimen>
     <dimen name="margin64">64dp</dimen>
