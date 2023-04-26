@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:visibility="gone"
-        tools:listitem="@layout/track_car" />
+        tools:listitem="@layout/track_card" />
 
     <LinearLayout
         android:id="@+id/placeholder"
@@ -98,7 +98,7 @@
             app:layout_constraintHeight_max="540dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_history_text"
-            tools:listitem="@layout/track_car" />
+            tools:listitem="@layout/track_card" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/clear_history"
