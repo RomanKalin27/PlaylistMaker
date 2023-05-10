@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="headline_text">22sp</dimen>
-    <dimen name="text">16sp</dimen>
-    <dimen name="subtext">11sp</dimen>
     <dimen name="placeholderText">19sp</dimen>
+    <dimen name="text">16sp</dimen>
     <dimen name="roundBtn_text">14sp</dimen>
+    <dimen name="playerText">13sp</dimen>
+    <dimen name="subtext">11sp</dimen>
     <dimen name="padding_horizontal">16dp</dimen>
     <dimen name="padding_top">14dp</dimen>
     <dimen name="setting_menu_button">61dp</dimen>
@@ -12,13 +13,17 @@
     <dimen name="icon_padding">10dp</dimen>
     <dimen name="space_between_btns">16dp</dimen>
     <dimen name="arrow_side">16dp</dimen>
-    <dimen name="arrow_margin">20dp</dimen>
+    <dimen name="margin20">20dp</dimen>
     <dimen name="arrow_indention">28dp</dimen>
     <dimen name="cross_side">20dp</dimen>
-    <dimen name="cross_margin">12dp</dimen>
+    <dimen name="margin12">12dp</dimen>
     <dimen name="cardview_icon_side">45dp</dimen>
     <dimen name="dot_side">3dp</dimen>
     <dimen name="dot_margin">6dp</dimen>
     <dimen name="roundBtn_height">36dp</dimen>
-    <dimen name="roundBtn_marginTop">24dp</dimen>
+    <dimen name="margin24">24dp</dimen>
+    <dimen name="margin30">30dp</dimen>
+    <dimen name="zero">0dp</dimen>
+    <dimen name="artwork_side">312dp</dimen>
+    <dimen name="margin64">64dp</dimen>
 </resources>

@@ -1,15 +1,11 @@
 package com.practicum.playlistmaker
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.edit
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -33,22 +29,27 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
             holder.saveTrack(trackList[position])
-            //val trackIntent = Intent(it.context, TrackActivity::class.java)
-            //it.context.startActivity(trackIntent)
+            val trackIntent = Intent(it.context, PlayerActivity::class.java)
+            it.context.startActivity(trackIntent)
         }
     }
 
     override fun getItemCount() = trackList.size
 
+    fun setData(newTrackList: ArrayList<Track>) {
+        val diffUtil = DiffUtil(trackList, newTrackList)
+        val diffResults = androidx.recyclerview.widget.DiffUtil.calculateDiff(diffUtil)
+        trackList = newTrackList
+        diffResults.dispatchUpdatesTo(this)
+    }
+
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val trackId: TextView = itemView.findViewById(R.id.card_track_id)
         private val artwork: ImageView = itemView.findViewById(R.id.card_icon)
         private val trackName: TextView = itemView.findViewById(R.id.card_track_name)
         private val trackTime: TextView = itemView.findViewById(R.id.card_track_length)
         private val artistName: TextView = itemView.findViewById(R.id.card_artist_name)
         private val historyStrings = HashSet<String>()
         fun bind(item: Track) {
-            trackId.text = item.trackId.toString()
             trackName.text = item.trackName
             trackTime.text =
                 SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis.toInt())
@@ -61,20 +62,14 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
         }
 
         fun saveTrack(item: Track) {
-            val track = Track(
-                item.trackId,
-                item.trackName,
-                item.artistName,
-                item.trackTimeMillis,
-                item.artworkUrl100
-            )
-            if (App.historyList.contains((track))) {
-                App.historyList.remove(track)
+
+            if (App.historyList.contains((item))) {
+                App.historyList.remove(item)
             }
-            if (App.historyList.size >= 10) {
+            if (App.historyList.size >= historySize) {
                 App.historyList.removeAt(9)
             }
-            App.historyList.add(0, track)
+            App.historyList.add(0, item)
             App.sharedPreferences.edit()
                 .remove(SearchActivity.NEW_TRACK)
                 .apply()
@@ -82,17 +77,24 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
                 historyStrings.add(createJsonFromTrack(it))
             }
             App.sharedPreferences.edit()
-                .putString("trackName",item.trackName)
-                .putString("artistName",item.artistName)
-                .putString("artwork", item.artworkUrl100)
+                .putString(SearchActivity.TRACK_NAME, item.trackName)
+                .putString(SearchActivity.ARTIST_NAME, item.artistName)
+                .putString(SearchActivity.ARTWORK, item.artworkUrl100)
+                .putString(SearchActivity.TRACK_TIME, trackTime.text.toString())
+                .putString(SearchActivity.COLLECTION_NAME, item.collectionName)
+                .putString(SearchActivity.RELEASE_DATE, item.releaseDate.substring(0, 4))
+                .putString(SearchActivity.PRIMARY_GENRE_NAME, item.primaryGenreName)
+                .putString(SearchActivity.COUNTRY, item.country)
                 .putStringSet(SearchActivity.NEW_TRACK, historyStrings)
                 .apply()
-            HistoryAdapter().notifyItemInserted(0)
-
         }
 
         private fun createJsonFromTrack(track: Track): String {
             return Gson().toJson(track)
+        }
+
+        companion object {
+            const val historySize = 10
         }
     }
 }

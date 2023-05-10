@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/BackgroundStyle"
     android:layout_height="@dimen/setting_menu_button"
     android:paddingHorizontal="12dp"
@@ -10,58 +10,57 @@
         android:id="@+id/card_icon"
         android:layout_width="@dimen/cardview_icon_side"
         android:layout_height="@dimen/cardview_icon_side"
-        android:layout_marginEnd="8dp"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/card_track_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="6dp"
-        android:layout_toEndOf="@+id/card_icon"
         android:ellipsize="end"
         android:fontFamily="@font/ys_display_regular"
-        android:maxWidth="280dp"
+        app:layout_constraintWidth_max="280dp"
         android:maxLines="1"
-        android:textColor="?attr/colorSecondary" />
+        android:textColor="?attr/colorSecondary"
+        app:layout_constraintStart_toEndOf="@+id/card_icon"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/card_artist_name"
         style="@style/SubText"
-        android:layout_marginEnd="@dimen/dot_margin"
-        android:layout_toEndOf="@+id/card_icon"
+        android:layout_marginTop="1dp"
         android:ellipsize="end"
-        android:maxLines="1" />
+        android:maxLines="1"
+        app:layout_constraintStart_toStartOf="@+id/card_track_name"
+        app:layout_constraintTop_toBottomOf="@+id/card_track_name" />
 
     <ImageView
         android:id="@+id/card_dot"
         android:layout_width="@dimen/dot_side"
         android:layout_height="@dimen/dot_side"
-        android:layout_below="@+id/card_track_name"
+        android:layout_marginStart="@dimen/dot_margin"
         android:layout_marginTop="@dimen/dot_margin"
-        android:layout_marginEnd="@dimen/dot_margin"
-        android:layout_toEndOf="@+id/card_artist_name"
-        android:src="@drawable/ic_dot" />
+        android:src="@drawable/ic_dot"
+        app:layout_constraintStart_toEndOf="@+id/card_artist_name"
+        app:layout_constraintTop_toBottomOf="@+id/card_track_name" />
 
     <TextView
         android:id="@+id/card_track_length"
         style="@style/SubText"
-        android:layout_toEndOf="@+id/card_dot" />
+        android:layout_marginStart="@dimen/dot_margin"
+        app:layout_constraintStart_toEndOf="@+id/card_dot"
+        app:layout_constraintTop_toTopOf="@+id/card_artist_name" />
 
     <ImageButton
         android:id="@+id/card_track_btn"
         android:layout_width="8dp"
         android:layout_height="14dp"
-        android:layout_marginStart="312dp"
         android:layout_marginTop="16dp"
-        android:layout_toEndOf="@+id/card_icon"
-        android:src="@drawable/ic_arrow_forward" />
-    <TextView
-        android:id="@+id/card_track_id"
-        style="@style/SubText"
-        android:visibility="gone"
-         />
-
-</RelativeLayout>
-
-
+        android:layout_marginEnd="@dimen/margin12"
+        android:src="@drawable/ic_arrow_forward"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
