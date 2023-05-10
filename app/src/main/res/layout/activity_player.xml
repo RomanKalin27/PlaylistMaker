@@ -16,7 +16,7 @@
         android:layout_width="@dimen/zero"
         android:layout_height="@dimen/zero"
         android:layout_marginHorizontal="@dimen/margin24"
-        android:layout_marginTop="82dp"
+        android:layout_marginTop="50dp"
         android:layout_marginBottom="@dimen/margin24"
         app:layout_constraintBottom_toTopOf="@+id/trackName"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,8 +33,8 @@
         android:paddingHorizontal="@dimen/margin24"
         app:layout_constraintBottom_toTopOf="@+id/artistName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_bias="0"/>
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/artistName"
