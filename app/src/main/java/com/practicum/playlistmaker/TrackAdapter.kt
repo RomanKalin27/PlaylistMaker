@@ -21,7 +21,6 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
             R.layout.track_card,
             parent, false
         )
-
         return ViewHolder(itemView)
     }
 
@@ -60,7 +59,6 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
                 .transform(RoundedCorners(2))
                 .into(artwork)
         }
-
         fun saveTrack(item: Track) {
 
             if (App.historyList.contains((item))) {
@@ -85,6 +83,7 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
                 .putString(SearchActivity.RELEASE_DATE, item.releaseDate.substring(0, 4))
                 .putString(SearchActivity.PRIMARY_GENRE_NAME, item.primaryGenreName)
                 .putString(SearchActivity.COUNTRY, item.country)
+                .putString(SearchActivity.PREVIEW_URL, item.previewUrl)
                 .putStringSet(SearchActivity.NEW_TRACK, historyStrings)
                 .apply()
         }
