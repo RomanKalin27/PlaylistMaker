@@ -1,6 +1,7 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.search.domain
 
 import androidx.recyclerview.widget.DiffUtil
+import com.practicum.playlistmaker.search.domain.models.Track
 
 class DiffUtil(
     private val oldList: ArrayList<Track>,

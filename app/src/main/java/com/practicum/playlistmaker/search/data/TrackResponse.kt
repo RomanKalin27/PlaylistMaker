@@ -1,4 +1,6 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.search.data
+
+import com.practicum.playlistmaker.search.domain.models.Track
 
 
 data class TrackResponse (
