@@ -2,10 +2,6 @@ package com.practicum.playlistmaker.search.data
 
 import android.app.Application
 import android.content.Context
-import android.widget.ImageView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import java.text.SimpleDateFormat
@@ -49,16 +45,8 @@ class TrackRepositoryImpl(private val context: Context) : TrackRepository {
         return sharedPrefs.getString(ARTIST_NAME, null)
     }
 
-    override fun getArtwork(artwork: ImageView) {
-        Glide.with(artwork)
-            .load(
-                sharedPrefs.getString(ARTWORK, null)
-                    ?.replaceAfterLast('/', "512x512bb.jpg")
-            )
-            .placeholder(R.drawable.ic_player_placeholder)
-            .transform(RoundedCorners(8))
-            .into(artwork)
-        //return sharedPrefs.getString(ARTWORK, null)
+    override fun getArtwork(): String? {
+        return sharedPrefs.getString(ARTWORK, null)
     }
 
     override fun getTrackTime(): String? {
@@ -96,5 +84,6 @@ class TrackRepositoryImpl(private val context: Context) : TrackRepository {
         const val PRIMARY_GENRE_NAME = "PRIMARY_GENRE_NAME"
         const val COUNTRY = "COUNTRY"
         const val PREVIEW_URL = "PREVIEW_URL"
+        const val INPUT = "INPUT"
     }
 }

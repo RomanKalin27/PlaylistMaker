@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.domain
+package com.practicum.playlistmaker.search.ui
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -17,11 +17,15 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
-import com.practicum.playlistmaker.player.presentation.PlayerActivity
+import com.practicum.playlistmaker.player.ui.PlayerActivity
+import com.practicum.playlistmaker.search.domain.DiffUtil
 
-class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
+class TrackAdapter : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     var trackList = ArrayList<Track>()
     var historyList = ArrayList<Track>()
+    var searchList = ArrayList<Track>()
+    var isHistory = true
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(
             R.layout.track_card,
@@ -31,13 +35,27 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //if (isHistory) {
+           // holder.bind(historyList[position])
+        //}
         holder.bind(trackList[position])
+       /* val trackRepository = TrackRepositoryImpl(context = holder.itemView.context)
+        val getHistoryUseCase = GetHistoryUseCase(trackRepository = trackRepository)
+        val handler = Handler(Looper.getMainLooper())
+        val setRunnable = Runnable { setData(getHistoryUseCase.execute())}
+        if(isHistory){
+            handler.postDelayed(setRunnable, SET_DATA_DEBOUNCE_DELAY)
+        }*/
         holder.itemView.setOnClickListener {
             val trackRepository = TrackRepositoryImpl(context = it.context)
             val saveTrackUseCase = SaveTrackUseCase(trackRepository = trackRepository)
             val getHistoryUseCase = GetHistoryUseCase(trackRepository = trackRepository)
             saveTrackUseCase.execute(trackList[position])
+            if(!isHistory) {
+                this.notifyDataSetChanged()
+            }
             setData(getHistoryUseCase.execute())
+            //this.notifyDataSetChanged()
             val trackIntent = Intent(it.context, PlayerActivity::class.java)
             it.context.startActivity(trackIntent)
         }
@@ -53,6 +71,14 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
         diffResults.dispatchUpdatesTo(this)
         return historyList
     }
+    /*private fun setData2(newTrackList: ArrayList<Track>): ArrayList<Track> {
+        val diffUtil = DiffUtil(searchList, newTrackList)
+        val diffResults = androidx.recyclerview.widget.DiffUtil.calculateDiff(diffUtil)
+        searchList= newTrackList
+        diffResults.dispatchUpdatesTo(this)
+        return searchList
+    }*/
+
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val artwork: ImageView = itemView.findViewById(R.id.card_icon)
@@ -70,6 +96,9 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
                 .transform(RoundedCorners(2))
                 .into(artwork)
         }
+        }
+    companion object {
+        private const val SET_DATA_DEBOUNCE_DELAY = 1000L
     }
-}
+    }
 

@@ -80,6 +80,11 @@ class PlayerInteractorImpl(val context: Context) : PlayerInteractor {
             .apply()
     }
 
+    override fun returnPlayerState(): Int {
+        return playerState
+    }
+
+
     companion object {
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1

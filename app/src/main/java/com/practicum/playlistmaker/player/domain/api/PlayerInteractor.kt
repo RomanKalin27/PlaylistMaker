@@ -9,5 +9,5 @@ interface PlayerInteractor {
     fun preparePlayer()
     fun startPlayer()
     fun pausePlayer()
-
+fun returnPlayerState(): Int
 }
