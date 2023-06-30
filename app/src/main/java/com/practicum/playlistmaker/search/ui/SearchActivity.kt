@@ -13,7 +13,6 @@ import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
@@ -23,8 +22,8 @@ import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.LO
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NOTHING_FOUND
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NO_CONNECTION
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.SEARCH_RESULTS
-import com.practicum.playlistmaker.search.presentation.SearchVM
-import com.practicum.playlistmaker.search.presentation.SearchVMFactory
+import com.practicum.playlistmaker.search.presentation.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private val searchRunnable = Runnable {
@@ -75,7 +74,7 @@ class SearchActivity : AppCompatActivity() {
     private val progressBar: ProgressBar by lazy {
         findViewById(R.id.progressBar)
     }
-    private val vm by lazy { ViewModelProvider(this, SearchVMFactory(this))[SearchVM::class.java] }
+    private val vm by viewModel<SearchViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)

@@ -1,19 +1,21 @@
 package com.practicum.playlistmaker.player.data
 
-import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Looper
-import com.practicum.playlistmaker.search.data.TrackRepositoryImpl
-import com.practicum.playlistmaker.search.data.TrackRepositoryImpl.Companion.SHARED_PREFS
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
+import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerInteractorImpl(val context: Context) : PlayerInteractor {
-    private val sharedPrefs = context.getSharedPreferences(SHARED_PREFS, Application.MODE_PRIVATE)
-    private val mediaPlayer = MediaPlayer()
+class PlayerInteractorImpl(
+    private val context: Context,
+    private val sharedPrefs: SharedPreferences,
+    private val trackRepository: TrackRepository,
+    private val mediaPlayer: MediaPlayer,
+) : PlayerInteractor {
     private val handler = android.os.Handler(Looper.getMainLooper())
     private val setTimeRunnable = Runnable { setTime() }
     private var playerState = STATE_DEFAULT
@@ -43,8 +45,9 @@ class PlayerInteractorImpl(val context: Context) : PlayerInteractor {
         }
     }
 
+
     override fun preparePlayer() {
-        val url = Uri.parse(TrackRepositoryImpl(context).getPreviewUrl())
+        val url = Uri.parse(trackRepository.getPreviewUrl())
         mediaPlayer.setDataSource(context, url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {

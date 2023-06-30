@@ -2,13 +2,17 @@ package com.practicum.playlistmaker.search.data
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackRepositoryImpl(private val context: Context) : TrackRepository {
-    private val sharedPrefs = context.getSharedPreferences(SHARED_PREFS, Application.MODE_PRIVATE)
+class TrackRepositoryImpl(
+    private val sharedPrefs: SharedPreferences
+) : TrackRepository {
     override fun saveTrack(track: Track, index: Int, trackString: String) {
         val trackTime =
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis.toInt())
@@ -73,8 +77,8 @@ class TrackRepositoryImpl(private val context: Context) : TrackRepository {
         return sharedPrefs.getString(PREVIEW_URL, null)
     }
 
+
     companion object {
-        const val SHARED_PREFS = "SHARED_PREFS"
         const val TRACK_NAME = "TRACK_NAME"
         const val ARTIST_NAME = "ARTIST_NAME"
         const val ARTWORK = "ARTWORK"
@@ -84,6 +88,5 @@ class TrackRepositoryImpl(private val context: Context) : TrackRepository {
         const val PRIMARY_GENRE_NAME = "PRIMARY_GENRE_NAME"
         const val COUNTRY = "COUNTRY"
         const val PREVIEW_URL = "PREVIEW_URL"
-        const val INPUT = "INPUT"
     }
 }

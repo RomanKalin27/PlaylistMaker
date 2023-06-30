@@ -10,7 +10,7 @@ import com.practicum.playlistmaker.settings.domain.usecases.SaveThemeUseCase
 import com.practicum.playlistmaker.settings.domain.usecases.ShareBtnUseCase
 import com.practicum.playlistmaker.settings.domain.usecases.SupportBtnUseCase
 
-class SettingVM(
+class SettingViewModel(
     private val shareBtnUseCase: ShareBtnUseCase,
     private val supportBtnUseCase: SupportBtnUseCase,
     private val agreementBtnUseCase: AgreementBtnUseCase,

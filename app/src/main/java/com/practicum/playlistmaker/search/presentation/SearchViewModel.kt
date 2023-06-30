@@ -22,7 +22,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class SearchVM(
+class SearchViewModel(
     private val getHistoryUseCase: GetHistoryUseCase,
     private val removeTracksUseCase: RemoveTracksUseCase,
 ) : ViewModel() {

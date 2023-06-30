@@ -9,14 +9,14 @@ import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.data.PlayerInteractorImpl
+import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.models.PlayerState
-import com.practicum.playlistmaker.search.data.TrackRepositoryImpl
+import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import com.practicum.playlistmaker.search.domain.models.Track
 
-class PlayerVM(
-    private val player: PlayerInteractorImpl,
-    private val trackRepository: TrackRepositoryImpl,
+class PlayerViewModel(
+    private val playerInteractor: PlayerInteractor,
+    private val trackRepository: TrackRepository,
 ) : ViewModel() {
     private val handler = Handler(Looper.getMainLooper())
     private val setTimeRunnable = Runnable { getPlayerState() }
@@ -24,9 +24,9 @@ class PlayerVM(
     private val screen = PlayerState()
 
     init {
-        loadTrack()
-        setTimeRunnable.run()
-    }
+     loadTrack()
+      setTimeRunnable.run()
+   }
 
     fun returnScreenState(): LiveData<PlayerState> {
         screenState.value = screen
@@ -48,15 +48,15 @@ class PlayerVM(
         returnScreenState()
     }
 
-    private fun getPlayerState() {
-        screen.playerState = player.returnPlayerState()
+   private fun getPlayerState() {
+        screen.playerState = playerInteractor.returnPlayerState()
         setTime()
         handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
         returnScreenState()
     }
 
     private fun setTime() {
-        screen.timePlayed = player.setTime()
+        screen.timePlayed = playerInteractor.setTime()
         returnScreenState()
     }
 
@@ -73,16 +73,16 @@ class PlayerVM(
 
 
     fun preparePlayer() {
-        player.preparePlayer()
+        playerInteractor.preparePlayer()
     }
 
-    fun playbackControl() {
-        player.playbackControl()
+   fun playbackControl() {
+        playerInteractor.playbackControl()
     }
 
     fun onDestroy() {
         handler.removeCallbacks(setTimeRunnable)
-        player.onDestroy()
+        playerInteractor.onDestroy()
     }
 
     companion object {
