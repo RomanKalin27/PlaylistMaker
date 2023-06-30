@@ -9,7 +9,7 @@ interface TrackRepository {
     fun getHistoryStrings(index: Int): String?
     fun getTrackName(): String?
     fun getArtistName(): String?
-    fun getArtwork(artwork: ImageView)
+    fun getArtwork(): String?
     fun getTrackTime(): String?
     fun getCollectionName(): String?
     fun getPrimaryGenreName(): String?

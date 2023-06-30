@@ -3,8 +3,8 @@ package com.practicum.playlistmaker.main.data
 import android.content.Context
 import android.content.Intent
 import com.practicum.playlistmaker.LibraryActivity
-import com.practicum.playlistmaker.search.presentation.SearchActivity
-import com.practicum.playlistmaker.settings.presentation.SettingActivity
+import com.practicum.playlistmaker.search.ui.SearchActivity
+import com.practicum.playlistmaker.settings.ui.SettingActivity
 import com.practicum.playlistmaker.main.domain.api.MenuInteractor
 
 class MenuInteractorImpl(val context: Context) : MenuInteractor {
