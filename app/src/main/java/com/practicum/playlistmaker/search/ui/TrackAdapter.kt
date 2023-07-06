@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.app.Application
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -11,21 +10,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.app.App
-import com.practicum.playlistmaker.search.data.TrackRepositoryImpl
+import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
-import com.practicum.playlistmaker.player.ui.PlayerActivity
-import com.practicum.playlistmaker.search.domain.DiffUtil
 
-class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
+class TrackAdapter(
+    private val saveTrack: SaveTrackUseCase, private val getHistory: GetHistoryUseCase,
+    private val adapterListener: AdapterListener
+) : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     var trackList = ArrayList<Track>()
-    var historyList = ArrayList<Track>()
-    var isHistory = true
+    var historyList = getHistory.execute()
+    var isClickable = true
+
+    interface AdapterListener {
+        fun onClick()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(
@@ -38,34 +41,30 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
-            val trackRepository = TrackRepositoryImpl(
-                sharedPrefs = it.context.getSharedPreferences(
-                    App.SHARED_PREFS, Application.MODE_PRIVATE
-                )
-            )
-            val saveTrackUseCase = SaveTrackUseCase(trackRepository = trackRepository)
-            val getHistoryUseCase = GetHistoryUseCase(trackRepository = trackRepository)
-            saveTrackUseCase.execute(trackList[position])
-            if (!isHistory) {
+            if (isClickable) {
+                adapterListener.onClick()
+                saveTrack.execute(trackList[position], historyList)
+                val trackIntent = Intent(it.context, PlayerActivity::class.java)
+                it.context.startActivity(trackIntent)
                 this.notifyDataSetChanged()
             }
-            setData(getHistoryUseCase.execute())
-            val trackIntent = Intent(it.context, PlayerActivity::class.java)
-            it.context.startActivity(trackIntent)
         }
     }
 
     override fun getItemCount() = trackList.size
 
-
-    fun setData(newTrackList: ArrayList<Track>): ArrayList<Track> {
+    fun clearAdapter() {
+        historyList.clear()
+        trackList.clear()
+        this.notifyDataSetChanged()
+    }
+    /*fun setData(newTrackList: ArrayList<Track>): ArrayList<Track> {
         val diffUtil = DiffUtil(historyList, newTrackList)
         val diffResults = androidx.recyclerview.widget.DiffUtil.calculateDiff(diffUtil)
         historyList = newTrackList
         diffResults.dispatchUpdatesTo(this)
         return historyList
-    }
-
+    }*/
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val artwork: ImageView = itemView.findViewById(R.id.card_icon)

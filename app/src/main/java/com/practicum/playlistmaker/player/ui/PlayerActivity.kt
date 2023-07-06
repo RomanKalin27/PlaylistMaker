@@ -9,7 +9,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.presentation.PlayerViewModel
-//import com.practicum.playlistmaker.player.presentation.PlayerVMFactory
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
@@ -90,7 +89,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
 
-       trackName.text = track.trackName
+        trackName.text = track.trackName
         artistName.text = track.artistName
         vm.getArtwork(artwork)
         trackTime.text = track.trackTimeMillis
@@ -109,12 +108,17 @@ class PlayerActivity : AppCompatActivity() {
         }
         goBackBtn.setOnClickListener {
             finish()
-            vm.onDestroy()
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+
+    override fun onPause() {
+        super.onPause()
+        vm.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         vm.onDestroy()
     }
 }

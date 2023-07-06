@@ -81,6 +81,7 @@ class PlayerInteractorImpl(
         sharedPrefs.edit()
             .putString(PLAYER_STATE, playerState.toString())
             .apply()
+
     }
 
     override fun returnPlayerState(): Int {

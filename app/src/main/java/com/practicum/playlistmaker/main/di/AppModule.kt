@@ -8,7 +8,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    viewModel<MainViewModel>() {
+    viewModel() {
         MainViewModel(
             searchIntentUseCase = get(),
             settingsIntentUseCase = get(),
@@ -16,19 +16,21 @@ val appModule = module {
             getThemeUseCase = get(),
         )
     }
-    viewModel<SearchViewModel>() {
+    viewModel() {
         SearchViewModel(
             getHistoryUseCase = get(),
+            saveTrackUseCase = get(),
             removeTracksUseCase = get(),
+            itunesService = get(),
         )
     }
-    viewModel<PlayerViewModel>() {
+    viewModel() {
         PlayerViewModel(
             playerInteractor = get(),
             trackRepository = get(),
         )
     }
-    viewModel<SettingViewModel>() {
+    viewModel() {
         SettingViewModel(
             agreementBtnUseCase = get(),
             getThemeUseCase = get(),

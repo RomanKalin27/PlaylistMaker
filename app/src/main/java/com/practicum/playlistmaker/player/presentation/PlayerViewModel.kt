@@ -24,9 +24,9 @@ class PlayerViewModel(
     private val screen = PlayerState()
 
     init {
-     loadTrack()
-      setTimeRunnable.run()
-   }
+        loadTrack()
+        setTimeRunnable.run()
+    }
 
     fun returnScreenState(): LiveData<PlayerState> {
         screenState.value = screen
@@ -48,7 +48,7 @@ class PlayerViewModel(
         returnScreenState()
     }
 
-   private fun getPlayerState() {
+    private fun getPlayerState() {
         screen.playerState = playerInteractor.returnPlayerState()
         setTime()
         handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
@@ -76,7 +76,7 @@ class PlayerViewModel(
         playerInteractor.preparePlayer()
     }
 
-   fun playbackControl() {
+    fun playbackControl() {
         playerInteractor.playbackControl()
     }
 
@@ -84,6 +84,14 @@ class PlayerViewModel(
         handler.removeCallbacks(setTimeRunnable)
         playerInteractor.onDestroy()
     }
+
+    fun onPause() {
+        if (screen.playerState == 2) {
+            playerInteractor.pausePlayer()
+        }
+
+    }
+
 
     companion object {
         private const val SET_TIME_DELAY = 400L

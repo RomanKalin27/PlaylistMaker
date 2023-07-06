@@ -1,10 +1,6 @@
 package com.practicum.playlistmaker.search.data
 
-import android.app.Application
-import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import java.text.SimpleDateFormat

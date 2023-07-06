@@ -4,41 +4,31 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.search.data.TrackResponse
-import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.search.domain.api.TrackApi
 import com.practicum.playlistmaker.search.domain.models.SearchState
-import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.BLANK_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.HISTORY_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.LOADING_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NOTHING_FOUND
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NO_CONNECTION
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.SEARCH_RESULTS
-import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
 import com.practicum.playlistmaker.search.domain.usecases.RemoveTracksUseCase
+import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchViewModel(
     private val getHistoryUseCase: GetHistoryUseCase,
+    private val saveTrackUseCase: SaveTrackUseCase,
     private val removeTracksUseCase: RemoveTracksUseCase,
+    private var itunesService: TrackApi
 ) : ViewModel() {
-    private val trackAdapter = TrackAdapter()
-    private val searchList = ArrayList<Track>()
     private var searchInput = String()
-    private val baseUrl = "https://itunes.apple.com/"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val itunesService = retrofit.create(TrackApi::class.java)
     private val screenState = MutableLiveData<SearchState>()
 
     init {
-        trackAdapter.historyList = getHistoryUseCase.execute()
+        loadHistory()
     }
 
     fun returnScreenState(): LiveData<SearchState> {
@@ -48,27 +38,23 @@ class SearchViewModel(
     fun setState(state: Int) {
         when (state) {
             SEARCH_RESULTS -> {
-                screenState.value = SearchState(SEARCH_RESULTS, trackAdapter)
+                screenState.value = SearchState(SEARCH_RESULTS)
             }
 
             LOADING_STATE -> {
-                screenState.value = SearchState(LOADING_STATE, trackAdapter)
+                screenState.value = SearchState(LOADING_STATE)
             }
 
             NOTHING_FOUND -> {
-                screenState.value = SearchState(NOTHING_FOUND, trackAdapter)
+                screenState.value = SearchState(NOTHING_FOUND)
             }
 
             NO_CONNECTION -> {
-                screenState.value = SearchState(NO_CONNECTION, trackAdapter)
+                screenState.value = SearchState(NO_CONNECTION)
             }
 
             HISTORY_STATE -> {
-                if (trackAdapter.historyList.isEmpty()) {
-                    screenState.value = SearchState(BLANK_STATE, trackAdapter)
-                } else {
-                    screenState.value = SearchState(HISTORY_STATE, trackAdapter)
-                }
+                screenState.value = SearchState(HISTORY_STATE)
             }
         }
         returnScreenState()
@@ -80,24 +66,27 @@ class SearchViewModel(
     }
 
     fun clearSearchList() {
-        searchList.clear()
+        screenState.value?.searchList?.clear()
     }
 
     fun clearHistoryList() {
-        trackAdapter.historyList.clear()
         removeTracksUseCase.execute()
         setState(HISTORY_STATE)
     }
 
     fun loadHistory() {
-        trackAdapter.isHistory = true
-        trackAdapter.trackList = trackAdapter.historyList
         setState(HISTORY_STATE)
     }
 
+    fun getHistory(): GetHistoryUseCase {
+        return getHistoryUseCase
+    }
+
+    fun saveTrack(): SaveTrackUseCase {
+        return saveTrackUseCase
+    }
+
     fun getTrack() {
-        trackAdapter.trackList = searchList
-        trackAdapter.isHistory = false
         if (searchInput.isNotEmpty()) {
             setState(LOADING_STATE)
             itunesService.search(searchInput).enqueue(object : Callback<TrackResponse?> {
@@ -106,13 +95,11 @@ class SearchViewModel(
                     response: Response<TrackResponse?>
                 ) {
                     clearSearchList()
-                    setState(SEARCH_RESULTS)
                     if (response.body()?.results?.isNotEmpty() == true) {
-                        searchList.addAll(response.body()?.results!!)
-                        trackAdapter.notifyDataSetChanged()
+                        setState(SEARCH_RESULTS)
+                        screenState.value?.searchList?.addAll(response.body()?.results!!)
                     } else {
                         setState(NOTHING_FOUND)
-                        trackAdapter.notifyDataSetChanged()
                     }
                 }
 

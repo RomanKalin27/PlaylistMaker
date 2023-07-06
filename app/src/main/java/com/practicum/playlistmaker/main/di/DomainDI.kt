@@ -25,13 +25,13 @@ val domainModule = module {
     single<MenuInteractor> {
         MenuInteractorImpl(context = get())
     }
-    factory<SettingsIntentUseCase> {
+    factory {
         SettingsIntentUseCase(menuInteractor = get())
     }
-    factory<SearchIntentUseCase> {
+    factory {
         SearchIntentUseCase(menuInteractor = get())
     }
-    factory<LibraryIntentUseCase> {
+    factory{
         LibraryIntentUseCase(menuInteractor = get())
     }
     single<SettingsInteractor> {
@@ -44,32 +44,31 @@ val domainModule = module {
             androidContext().getString(R.string.message),
         )
     }
-    factory<ShareBtnUseCase> {
+    factory {
         ShareBtnUseCase(settingsInteractor = get())
     }
-    factory<SupportBtnUseCase> {
+    factory {
         SupportBtnUseCase(settingsInteractor = get())
     }
-    factory<AgreementBtnUseCase> {
+    factory {
         AgreementBtnUseCase(settingsInteractor = get())
     }
-    factory<GetThemeUseCase> {
+    factory {
         GetThemeUseCase(themeRepository = get())
     }
-    factory<SaveThemeUseCase> {
+    factory {
         SaveThemeUseCase(themeRepository = get())
     }
-    factory<SaveTrackUseCase> {
-        SaveTrackUseCase(trackRepository = get())
+    factory {
+        SaveTrackUseCase(trackRepository = get(), gson = get())
     }
-    factory<GetHistoryUseCase> {
+    factory {
         GetHistoryUseCase(trackRepository = get())
     }
-    factory<RemoveTracksUseCase> {
+    factory {
         RemoveTracksUseCase(trackRepository = get())
     }
-    factory<MediaPlayer> {
+    factory {
         MediaPlayer()
     }
-
 }
