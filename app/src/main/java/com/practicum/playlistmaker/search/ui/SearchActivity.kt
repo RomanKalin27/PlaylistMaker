@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.search.ui
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -16,11 +17,13 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.HISTORY_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.LOADING_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NOTHING_FOUND
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NO_CONNECTION
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.SEARCH_RESULTS
+import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.presentation.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -31,7 +34,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
     }
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    private val trackAdapter by lazy { TrackAdapter(vm.saveTrack(), vm.getHistory(), this) }
+    private val trackAdapter by lazy { TrackAdapter( this, ) }
     private val searchEditText: EditText by lazy {
         findViewById(R.id.searchBar)
     }
@@ -76,6 +79,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        vm.getHistory(trackAdapter)
         vm.returnScreenState().observe(this) {
             searchRecycler.isVisible = false
             progressBar.isVisible = false
@@ -96,6 +100,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
                 NOTHING_FOUND -> {
                     trackAdapter.notifyDataSetChanged()
                     placeholderText.text = getString(R.string.nothing_found)
+                    placeholderExtraText.isVisible = false
                     refreshBtn.isGone = true
                     placeholderImage.setBackgroundResource(R.drawable.ic_nothing_found)
                     placeholder.isVisible = true
@@ -105,6 +110,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
                     placeholderText.text = getString(R.string.nothing_found)
                     placeholderExtraText.text = searchEditText.text.toString()
                     refreshBtn.isGone = false
+                    placeholderExtraText.isVisible = true
                     placeholderImage.setBackgroundResource(R.drawable.ic_no_connection)
                     placeholder.isVisible = true
                 }
@@ -168,8 +174,13 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
         }
     }
 
-    override fun onClick() {
-        (clickDebounce())
+    override fun onClick(track: Track) {
+        if (clickDebounce()) {
+            vm.saveTrack(track, trackAdapter.historyList)
+            val trackIntent = Intent(this, PlayerActivity::class.java)
+            this.startActivity(trackIntent)
+            trackAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun searchDebounce() {
@@ -179,15 +190,14 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
     }
 
     private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            trackAdapter.isClickable = false
             handler.postDelayed({
                 isClickAllowed = true
-                trackAdapter.isClickable = true
             }, CLICK_DEBOUNCE_DELAY)
         }
-        return isClickAllowed
+        return current
     }
 
 

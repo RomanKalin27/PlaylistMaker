@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.data
+package com.practicum.playlistmaker.search.data.repository
 
 import android.content.SharedPreferences
 import com.practicum.playlistmaker.search.domain.models.Track

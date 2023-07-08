@@ -7,9 +7,15 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.app.App.Companion.SHARED_PREFS
 import com.practicum.playlistmaker.player.data.PlayerInteractorImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
-import com.practicum.playlistmaker.search.data.TrackRepositoryImpl
-import com.practicum.playlistmaker.search.domain.api.TrackApi
+import com.practicum.playlistmaker.search.data.network.NetworkClient
+import com.practicum.playlistmaker.search.data.network.RetrofitClient
+import com.practicum.playlistmaker.search.data.repository.TrackRepositoryImpl
+import com.practicum.playlistmaker.search.data.network.TrackApi
+import com.practicum.playlistmaker.search.data.repository.SearchRepositoryImpl
+import com.practicum.playlistmaker.search.domain.api.SearchInteractor
+import com.practicum.playlistmaker.search.domain.api.SearchRepository
 import com.practicum.playlistmaker.search.domain.api.TrackRepository
+import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.practicum.playlistmaker.settings.data.ThemeRepositoryImpl
 import com.practicum.playlistmaker.settings.domain.api.ThemeRepository
 import org.koin.android.ext.koin.androidContext
@@ -29,6 +35,9 @@ val dataModule = module {
             mediaPlayer = get()
         )
     }
+    factory<SearchInteractor>{
+        SearchInteractorImpl(repository = get())
+    }
     single<TrackRepository> {
         TrackRepositoryImpl(
             sharedPrefs = get()
@@ -37,15 +46,20 @@ val dataModule = module {
     single<ThemeRepository> {
         ThemeRepositoryImpl(sharedPrefs = get())
     }
-    single<TrackApi>
-    {
+    single<SearchRepository> {
+        SearchRepositoryImpl(networkClient = get())
+    }
+    single<NetworkClient> {
+        RetrofitClient(androidContext(), itunesService = get())
+    }
+    single<TrackApi> {
         Retrofit.Builder()
             .baseUrl(androidContext().getString(R.string.base_url))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(TrackApi::class.java)
     }
-    single<Gson>{
+    single {
         Gson()
     }
 }

@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,24 +9,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.ui.PlayerActivity
-import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import com.practicum.playlistmaker.search.domain.models.Track
-import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
 
 class TrackAdapter(
-    private val saveTrack: SaveTrackUseCase, private val getHistory: GetHistoryUseCase,
     private val adapterListener: AdapterListener
 ) : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     var trackList = ArrayList<Track>()
-    var historyList = getHistory.execute()
-    var isClickable = true
+    var historyList = ArrayList<Track>()
 
     interface AdapterListener {
-        fun onClick()
+        fun onClick(track: Track)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -41,13 +35,7 @@ class TrackAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
-            if (isClickable) {
-                adapterListener.onClick()
-                saveTrack.execute(trackList[position], historyList)
-                val trackIntent = Intent(it.context, PlayerActivity::class.java)
-                it.context.startActivity(trackIntent)
-                this.notifyDataSetChanged()
-            }
+            adapterListener.onClick(trackList[position])
         }
     }
 

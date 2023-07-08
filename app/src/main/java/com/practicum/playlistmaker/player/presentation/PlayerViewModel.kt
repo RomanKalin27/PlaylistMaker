@@ -86,7 +86,7 @@ class PlayerViewModel(
     }
 
     fun onPause() {
-        if (screen.playerState == 2) {
+        if (screen.playerState == STATE_PLAYING) {
             playerInteractor.pausePlayer()
         }
 
@@ -95,6 +95,6 @@ class PlayerViewModel(
 
     companion object {
         private const val SET_TIME_DELAY = 400L
-
+        private const val STATE_PLAYING = 2
     }
 }

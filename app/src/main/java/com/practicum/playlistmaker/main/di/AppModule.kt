@@ -21,7 +21,7 @@ val appModule = module {
             getHistoryUseCase = get(),
             saveTrackUseCase = get(),
             removeTracksUseCase = get(),
-            itunesService = get(),
+            searchInteractor = get(),
         )
     }
     viewModel() {

@@ -3,28 +3,26 @@ package com.practicum.playlistmaker.search.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.practicum.playlistmaker.search.data.TrackResponse
-import com.practicum.playlistmaker.search.domain.api.TrackApi
+import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.models.SearchState
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.HISTORY_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.LOADING_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NOTHING_FOUND
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NO_CONNECTION
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.SEARCH_RESULTS
+import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
 import com.practicum.playlistmaker.search.domain.usecases.RemoveTracksUseCase
 import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.practicum.playlistmaker.search.ui.TrackAdapter
 
 class SearchViewModel(
     private val getHistoryUseCase: GetHistoryUseCase,
     private val saveTrackUseCase: SaveTrackUseCase,
     private val removeTracksUseCase: RemoveTracksUseCase,
-    private var itunesService: TrackApi
+    private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
-    private var searchInput = String()
+    private var searchInput = ""
     private val screenState = MutableLiveData<SearchState>()
 
     init {
@@ -38,23 +36,23 @@ class SearchViewModel(
     fun setState(state: Int) {
         when (state) {
             SEARCH_RESULTS -> {
-                screenState.value = SearchState(SEARCH_RESULTS)
+                screenState.postValue(SearchState(SEARCH_RESULTS))
             }
 
             LOADING_STATE -> {
-                screenState.value = SearchState(LOADING_STATE)
+                screenState.postValue(SearchState(LOADING_STATE))
             }
 
             NOTHING_FOUND -> {
-                screenState.value = SearchState(NOTHING_FOUND)
+                screenState.postValue(SearchState(NOTHING_FOUND))
             }
 
             NO_CONNECTION -> {
-                screenState.value = SearchState(NO_CONNECTION)
+                screenState.postValue(SearchState(NO_CONNECTION))
             }
 
             HISTORY_STATE -> {
-                screenState.value = SearchState(HISTORY_STATE)
+                screenState.postValue(SearchState(HISTORY_STATE))
             }
         }
         returnScreenState()
@@ -78,37 +76,32 @@ class SearchViewModel(
         setState(HISTORY_STATE)
     }
 
-    fun getHistory(): GetHistoryUseCase {
-        return getHistoryUseCase
+    fun getHistory(adapter: TrackAdapter) {
+        adapter.historyList = getHistoryUseCase.execute()
     }
 
-    fun saveTrack(): SaveTrackUseCase {
-        return saveTrackUseCase
+    fun saveTrack(track: Track, historyList: ArrayList<Track>) {
+        saveTrackUseCase.execute(track, historyList)
     }
 
     fun getTrack() {
-        if (searchInput.isNotEmpty()) {
-            setState(LOADING_STATE)
-            itunesService.search(searchInput).enqueue(object : Callback<TrackResponse?> {
-                override fun onResponse(
-                    call: Call<TrackResponse?>,
-                    response: Response<TrackResponse?>
-                ) {
+        setState(LOADING_STATE)
+        searchInteractor.searchTracks(searchInput,
+            object : SearchInteractor.TracksConsumer {
+                override fun consume(foundMovies: List<Track>) {
                     clearSearchList()
-                    if (response.body()?.results?.isNotEmpty() == true) {
+                    if (foundMovies.isNotEmpty()) {
                         setState(SEARCH_RESULTS)
-                        screenState.value?.searchList?.addAll(response.body()?.results!!)
+                        screenState.value?.searchList?.addAll(foundMovies)
                     } else {
-                        setState(NOTHING_FOUND)
+                        if (searchInteractor.isOnline()) {
+                            setState(NOTHING_FOUND)
+                        } else {
+                            setState(NO_CONNECTION)
+                        }
                     }
                 }
-
-                override fun onFailure(call: Call<TrackResponse?>, t: Throwable) {
-                    setState(NO_CONNECTION)
-                }
             })
-        }
     }
-
-
 }
+
