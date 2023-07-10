@@ -14,7 +14,6 @@ import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
 import com.practicum.playlistmaker.search.domain.usecases.RemoveTracksUseCase
 import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
-import com.practicum.playlistmaker.search.ui.TrackAdapter
 
 class SearchViewModel(
     private val getHistoryUseCase: GetHistoryUseCase,
@@ -61,6 +60,7 @@ class SearchViewModel(
     fun saveInput(input: String) {
         searchInput = input
         screenState.value?.searchInput = input
+
     }
 
     fun clearSearchList() {
@@ -76,8 +76,8 @@ class SearchViewModel(
         setState(HISTORY_STATE)
     }
 
-    fun getHistory(adapter: TrackAdapter) {
-        adapter.historyList = getHistoryUseCase.execute()
+    fun getHistory() {
+        screenState.value?.historyList?.addAll(getHistoryUseCase.execute())
     }
 
     fun saveTrack(track: Track, historyList: ArrayList<Track>) {

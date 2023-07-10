@@ -3,8 +3,8 @@ package com.practicum.playlistmaker.search.domain.models
 
 class SearchState(
     val state: Int,
-
 ) {
+    var historyList = ArrayList<Track>()
     var searchList = ArrayList<Track>()
     var searchInput = ""
 

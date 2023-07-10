@@ -7,6 +7,10 @@ import com.practicum.playlistmaker.main.domain.api.MenuInteractor
 import com.practicum.playlistmaker.main.domain.usecases.LibraryIntentUseCase
 import com.practicum.playlistmaker.main.domain.usecases.SearchIntentUseCase
 import com.practicum.playlistmaker.main.domain.usecases.SettingsIntentUseCase
+import com.practicum.playlistmaker.player.data.PlayerInteractorImpl
+import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
+import com.practicum.playlistmaker.search.domain.api.SearchInteractor
+import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
 import com.practicum.playlistmaker.search.domain.usecases.RemoveTracksUseCase
 import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
@@ -24,6 +28,17 @@ import org.koin.dsl.module
 val domainModule = module {
     single<MenuInteractor> {
         MenuInteractorImpl(context = get())
+    }
+    factory<PlayerInteractor> {
+        PlayerInteractorImpl(
+            context = get(),
+            sharedPrefs = get(),
+            trackRepository = get(),
+            mediaPlayer = get()
+        )
+    }
+    factory<SearchInteractor>{
+        SearchInteractorImpl(repository = get())
     }
     factory {
         SettingsIntentUseCase(menuInteractor = get())

@@ -15,7 +15,7 @@ import kotlin.collections.ArrayList
 import com.practicum.playlistmaker.search.domain.models.Track
 
 class TrackAdapter(
-    private val adapterListener: AdapterListener
+    private val adapterListener: AdapterListener,
 ) : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     var trackList = ArrayList<Track>()
     var historyList = ArrayList<Track>()

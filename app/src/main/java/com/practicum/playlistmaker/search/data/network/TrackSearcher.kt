@@ -4,13 +4,15 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.practicum.playlistmaker.search.data.dto.Response
+import com.practicum.playlistmaker.search.data.dto.Response.Companion.BAD_REQUEST_CODE
+import com.practicum.playlistmaker.search.data.dto.Response.Companion.NO_CONNECTION_CODE
 import com.practicum.playlistmaker.search.data.dto.TrackSearchRequest
 
-class RetrofitClient(private val context: Context, private val itunesService: TrackApi) :
+class TrackSearcher(private val context: Context, private val itunesService: TrackApi) :
     NetworkClient {
     override fun doRequest(dto: Any): Response {
         if (!isOnline()) {
-            return Response().apply { resultCode = -1 }
+            return Response().apply { resultCode = NO_CONNECTION_CODE }
         }
         if (dto is TrackSearchRequest) {
             val resp = itunesService.search(dto.expression).execute()
@@ -20,7 +22,7 @@ class RetrofitClient(private val context: Context, private val itunesService: Tr
             return body.apply { resultCode = resp.code() }
         } else {
 
-            return Response().apply { resultCode = 400 }
+            return Response().apply { resultCode = BAD_REQUEST_CODE }
         }
     }
 
@@ -30,13 +32,9 @@ class RetrofitClient(private val context: Context, private val itunesService: Tr
         ) as ConnectivityManager
         val capabilities =
             connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        if (capabilities != null) {
-            when {
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
-            }
-        }
-        return false
+
+        return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
     }
 }

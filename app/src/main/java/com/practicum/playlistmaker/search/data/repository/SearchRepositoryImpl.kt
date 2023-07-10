@@ -1,5 +1,7 @@
 package com.practicum.playlistmaker.search.data.repository
 
+import com.practicum.playlistmaker.search.data.dto.Response.Companion.NO_CONNECTION_CODE
+import com.practicum.playlistmaker.search.data.dto.Response.Companion.SUCCESS_CODE
 import com.practicum.playlistmaker.search.data.dto.TrackSearchRequest
 import com.practicum.playlistmaker.search.data.dto.TrackSearchResponse
 import com.practicum.playlistmaker.search.data.network.NetworkClient
@@ -11,7 +13,7 @@ class SearchRepositoryImpl(private val networkClient: NetworkClient) : SearchRep
     override fun searchTracks(expression: String): List<Track> {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
         when (response.resultCode) {
-            200 -> {
+            SUCCESS_CODE -> {
                 isOnline = true
                 return (response as TrackSearchResponse).results.map {
                     Track(
@@ -29,7 +31,7 @@ class SearchRepositoryImpl(private val networkClient: NetworkClient) : SearchRep
                 }
             }
 
-            -1 -> {
+            NO_CONNECTION_CODE -> {
                 isOnline = false
                 return emptyList()
             }

@@ -5,17 +5,13 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.app.App.Companion.SHARED_PREFS
-import com.practicum.playlistmaker.player.data.PlayerInteractorImpl
-import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.search.data.network.NetworkClient
-import com.practicum.playlistmaker.search.data.network.RetrofitClient
+import com.practicum.playlistmaker.search.data.network.TrackSearcher
 import com.practicum.playlistmaker.search.data.repository.TrackRepositoryImpl
 import com.practicum.playlistmaker.search.data.network.TrackApi
 import com.practicum.playlistmaker.search.data.repository.SearchRepositoryImpl
-import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchRepository
 import com.practicum.playlistmaker.search.domain.api.TrackRepository
-import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.practicum.playlistmaker.settings.data.ThemeRepositoryImpl
 import com.practicum.playlistmaker.settings.domain.api.ThemeRepository
 import org.koin.android.ext.koin.androidContext
@@ -26,17 +22,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 val dataModule = module {
     single<SharedPreferences> {
         androidContext().getSharedPreferences(SHARED_PREFS, Application.MODE_PRIVATE)
-    }
-    factory<PlayerInteractor> {
-        PlayerInteractorImpl(
-            context = get(),
-            sharedPrefs = get(),
-            trackRepository = get(),
-            mediaPlayer = get()
-        )
-    }
-    factory<SearchInteractor>{
-        SearchInteractorImpl(repository = get())
     }
     single<TrackRepository> {
         TrackRepositoryImpl(
@@ -50,7 +35,7 @@ val dataModule = module {
         SearchRepositoryImpl(networkClient = get())
     }
     single<NetworkClient> {
-        RetrofitClient(androidContext(), itunesService = get())
+        TrackSearcher(androidContext(), itunesService = get())
     }
     single<TrackApi> {
         Retrofit.Builder()

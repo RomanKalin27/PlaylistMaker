@@ -32,9 +32,14 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
         vm.saveInput(searchEditText.text.toString())
         vm.getTrack()
     }
+    private val historyRunnable = Runnable {
+        vm.getHistory()
+        trackAdapter.historyList = vm.returnScreenState().value!!.historyList
+        vm.loadHistory()
+    }
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    private val trackAdapter by lazy { TrackAdapter( this, ) }
+    private val trackAdapter by lazy { TrackAdapter(this) }
     private val searchEditText: EditText by lazy {
         findViewById(R.id.searchBar)
     }
@@ -79,7 +84,6 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        vm.getHistory(trackAdapter)
         vm.returnScreenState().observe(this) {
             searchRecycler.isVisible = false
             progressBar.isVisible = false
@@ -123,13 +127,13 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
                 }
             }
         }
+        getHistory()
         searchRecycler.adapter = trackAdapter
         searchRecycler.layoutManager = LinearLayoutManager(applicationContext)
 
         historyRecycler.adapter = trackAdapter
         historyRecycler.layoutManager = LinearLayoutManager(applicationContext)
         searchEditText.setText(vm.returnScreenState().value?.searchInput)
-
         refreshBtn.setOnClickListener {
             vm.saveInput(searchEditText.text.toString())
             vm.getTrack()
@@ -183,6 +187,10 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
         }
     }
 
+    private fun getHistory() {
+        handler.postDelayed(historyRunnable, HISTORY_DELAY)
+    }
+
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         if (searchEditText.text.isNotEmpty())
@@ -217,5 +225,6 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val HISTORY_DELAY = 300L
     }
 }
