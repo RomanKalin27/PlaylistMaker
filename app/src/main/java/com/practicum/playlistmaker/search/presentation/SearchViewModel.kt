@@ -22,6 +22,7 @@ class SearchViewModel(
     private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
     private var searchInput = ""
+    private var searchScreen = SearchState(SEARCH_RESULTS)
     private val screenState = MutableLiveData<SearchState>()
 
     init {
@@ -35,7 +36,7 @@ class SearchViewModel(
     fun setState(state: Int) {
         when (state) {
             SEARCH_RESULTS -> {
-                screenState.postValue(SearchState(SEARCH_RESULTS))
+                screenState.postValue(searchScreen)
             }
 
             LOADING_STATE -> {
@@ -64,7 +65,7 @@ class SearchViewModel(
     }
 
     fun clearSearchList() {
-        screenState.value?.searchList?.clear()
+        searchScreen.searchList.clear()
     }
 
     fun clearHistoryList() {
@@ -91,8 +92,8 @@ class SearchViewModel(
                 override fun consume(foundMovies: List<Track>) {
                     clearSearchList()
                     if (foundMovies.isNotEmpty()) {
+                        searchScreen.searchList.addAll(foundMovies)
                         setState(SEARCH_RESULTS)
-                        screenState.value?.searchList?.addAll(foundMovies)
                     } else {
                         if (searchInteractor.isOnline()) {
                             setState(NOTHING_FOUND)
