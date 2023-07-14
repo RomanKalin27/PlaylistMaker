@@ -1,5 +1,8 @@
 package com.practicum.playlistmaker.main.di
 
+import com.practicum.playlistmaker.library.presentation.FavoritesFragmentViewModel
+import com.practicum.playlistmaker.library.presentation.LibraryViewModel
+import com.practicum.playlistmaker.library.presentation.PlaylistsFragmentViewModel
 import com.practicum.playlistmaker.main.presentation.MainViewModel
 import com.practicum.playlistmaker.player.presentation.PlayerViewModel
 import com.practicum.playlistmaker.search.presentation.SearchViewModel
@@ -8,7 +11,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    viewModel() {
+    viewModel {
         MainViewModel(
             searchIntentUseCase = get(),
             settingsIntentUseCase = get(),
@@ -16,7 +19,7 @@ val appModule = module {
             getThemeUseCase = get(),
         )
     }
-    viewModel() {
+    viewModel {
         SearchViewModel(
             getHistoryUseCase = get(),
             saveTrackUseCase = get(),
@@ -24,13 +27,13 @@ val appModule = module {
             searchInteractor = get(),
         )
     }
-    viewModel() {
+    viewModel {
         PlayerViewModel(
             playerInteractor = get(),
             trackRepository = get(),
         )
     }
-    viewModel() {
+    viewModel {
         SettingViewModel(
             agreementBtnUseCase = get(),
             getThemeUseCase = get(),
@@ -38,5 +41,14 @@ val appModule = module {
             shareBtnUseCase = get(),
             supportBtnUseCase = get(),
         )
+    }
+    viewModel {
+        LibraryViewModel()
+    }
+    viewModel {
+        FavoritesFragmentViewModel()
+    }
+    viewModel {
+        PlaylistsFragmentViewModel()
     }
 }
