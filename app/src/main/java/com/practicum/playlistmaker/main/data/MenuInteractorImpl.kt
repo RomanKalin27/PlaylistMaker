@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.main.data
 
 import android.content.Context
 import android.content.Intent
-import com.practicum.playlistmaker.library.ui.LibraryActivity
+import com.practicum.playlistmaker.LibraryActivity
 import com.practicum.playlistmaker.search.ui.SearchActivity
 import com.practicum.playlistmaker.settings.ui.SettingActivity
 import com.practicum.playlistmaker.main.domain.api.MenuInteractor
