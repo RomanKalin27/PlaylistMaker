@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.domain.api
 
-import android.widget.ImageView
 import com.practicum.playlistmaker.search.domain.models.Track
 
 interface TrackRepository {

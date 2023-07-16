@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.player.domain.api
 
 
 interface PlayerInteractor {
-    fun setTime(): String
+   fun setTime(): String
     fun onPause()
     fun onDestroy()
     fun playbackControl()

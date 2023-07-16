@@ -17,6 +17,7 @@ class SettingsInteractorImpl(
         val share = Intent(Intent.ACTION_SEND)
         share.type = "text/plane"
         share.putExtra(Intent.EXTRA_TEXT, shareLink)
+        share.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(share)
     }
 
@@ -27,12 +28,14 @@ class SettingsInteractorImpl(
         emailSupport.putExtra(Intent.EXTRA_EMAIL, emails)
         emailSupport.putExtra(Intent.EXTRA_SUBJECT, subject)
         emailSupport.putExtra(Intent.EXTRA_TEXT, text)
+        emailSupport.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(emailSupport)
     }
 
     override fun agreementBtn() {
         val agreement =
             Intent(Intent.ACTION_VIEW, Uri.parse(agreementLink))
+        agreement.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(agreement)
     }
 }

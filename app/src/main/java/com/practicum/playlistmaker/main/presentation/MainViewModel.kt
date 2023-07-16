@@ -7,7 +7,7 @@ import com.practicum.playlistmaker.main.domain.usecases.SearchIntentUseCase
 import com.practicum.playlistmaker.main.domain.usecases.SettingsIntentUseCase
 import com.practicum.playlistmaker.settings.domain.usecases.GetThemeUseCase
 
-class MainVM(
+class MainViewModel(
     private val searchIntentUseCase: SearchIntentUseCase,
     private val libraryIntentUseCase: LibraryIntentUseCase,
     private val settingsIntentUseCase: SettingsIntentUseCase,

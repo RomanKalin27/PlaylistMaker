@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/BackgroundStyle"
     android:background="?attr/colorPrimaryVariant"
-    android:paddingHorizontal="@dimen/padding_horizontal"
-    android:paddingTop="@dimen/padding_top"
+    android:paddingHorizontal="@dimen/margin16"
+    android:paddingTop="@dimen/margin14"
     android:paddingBottom="12dp">
 
     <TextView

@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.search.ui
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -13,31 +14,34 @@ import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.BLANK_STATE
+import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.HISTORY_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.LOADING_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NOTHING_FOUND
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NO_CONNECTION
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.SEARCH_RESULTS
-import com.practicum.playlistmaker.search.presentation.SearchVM
-import com.practicum.playlistmaker.search.presentation.SearchVMFactory
+import com.practicum.playlistmaker.search.domain.models.Track
+import com.practicum.playlistmaker.search.presentation.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity(), TrackAdapter.AdapterListener {
     private val searchRunnable = Runnable {
-        vm.saveInput(searchInput)
+        vm.saveInput(searchEditText.text.toString())
         vm.getTrack()
+    }
+    private val historyRunnable = Runnable {
+        vm.getHistory()
+        trackAdapter.historyList = vm.returnScreenState().value!!.historyList
+        vm.loadHistory()
     }
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
+    private val trackAdapter by lazy { TrackAdapter(this) }
     private val searchEditText: EditText by lazy {
         findViewById(R.id.searchBar)
-    }
-    private val searchInput: String by lazy {
-        searchEditText.text.toString()
     }
     private val goBackBtn: ImageButton by lazy {
         findViewById(R.id.goBackBtn)
@@ -75,7 +79,8 @@ class SearchActivity : AppCompatActivity() {
     private val progressBar: ProgressBar by lazy {
         findViewById(R.id.progressBar)
     }
-    private val vm by lazy { ViewModelProvider(this, SearchVMFactory(this))[SearchVM::class.java] }
+
+    private val vm by viewModel<SearchViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -87,8 +92,8 @@ class SearchActivity : AppCompatActivity() {
 
             when (it.state) {
                 SEARCH_RESULTS -> {
-                    searchRecycler.adapter = it.trackAdapter
-                    searchRecycler.layoutManager = LinearLayoutManager(applicationContext)
+                    trackAdapter.trackList = it.searchList
+                    trackAdapter.notifyDataSetChanged()
                     searchRecycler.isVisible = true
                 }
 
@@ -97,39 +102,40 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 NOTHING_FOUND -> {
-                    vm.clearSearchList()
+                    trackAdapter.notifyDataSetChanged()
                     placeholderText.text = getString(R.string.nothing_found)
+                    placeholderExtraText.isVisible = false
                     refreshBtn.isGone = true
                     placeholderImage.setBackgroundResource(R.drawable.ic_nothing_found)
                     placeholder.isVisible = true
-
                 }
 
                 NO_CONNECTION -> {
-                    vm.clearSearchList()
                     placeholderText.text = getString(R.string.nothing_found)
-                    placeholderExtraText.text = searchInput
+                    placeholderExtraText.text = searchEditText.text.toString()
                     refreshBtn.isGone = false
+                    placeholderExtraText.isVisible = true
                     placeholderImage.setBackgroundResource(R.drawable.ic_no_connection)
                     placeholder.isVisible = true
                 }
 
                 HISTORY_STATE -> {
-                    if (clickDebounce()) {
-                        historyRecycler.adapter = it.trackAdapter
-                        historyRecycler.layoutManager = LinearLayoutManager(applicationContext)
+                    if (trackAdapter.historyList.isNotEmpty()) {
+                        trackAdapter.trackList = trackAdapter.historyList
+                        searchHistory.isVisible = true
                     }
-                    searchHistory.isVisible = true
-                }
-
-                BLANK_STATE -> {
-
                 }
             }
         }
-        searchEditText.setText(vm.returnScreenState().value?.searchInput)
+        getHistory()
+        searchRecycler.adapter = trackAdapter
+        searchRecycler.layoutManager = LinearLayoutManager(applicationContext)
 
+        historyRecycler.adapter = trackAdapter
+        historyRecycler.layoutManager = LinearLayoutManager(applicationContext)
+        searchEditText.setText(vm.returnScreenState().value?.searchInput)
         refreshBtn.setOnClickListener {
+            vm.saveInput(searchEditText.text.toString())
             vm.getTrack()
         }
         goBackBtn.setOnClickListener {
@@ -143,6 +149,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearHistory.setOnClickListener() {
+            trackAdapter.clearAdapter()
             vm.clearHistoryList()
         }
 
@@ -161,15 +168,27 @@ class SearchActivity : AppCompatActivity() {
                 searchDebounce()
             }
         })
-        vm.loadHistory()
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (clickDebounce() && actionId == EditorInfo.IME_ACTION_DONE) {
-                vm.saveInput(searchInput)
+                vm.saveInput(searchEditText.text.toString())
                 vm.getTrack()
                 true
             }
             false
         }
+    }
+
+    override fun onClick(track: Track) {
+        if (clickDebounce()) {
+            vm.saveTrack(track, trackAdapter.historyList)
+            val trackIntent = Intent(this, PlayerActivity::class.java)
+            this.startActivity(trackIntent)
+            trackAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun getHistory() {
+        handler.postDelayed(historyRunnable, HISTORY_DELAY)
     }
 
     private fun searchDebounce() {
@@ -182,7 +201,9 @@ class SearchActivity : AppCompatActivity() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            handler.postDelayed({
+                isClickAllowed = true
+            }, CLICK_DEBOUNCE_DELAY)
         }
         return current
     }
@@ -198,11 +219,12 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        vm.saveInput(searchInput)
+        vm.saveInput(searchEditText.text.toString())
     }
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val HISTORY_DELAY = 300L
     }
 }

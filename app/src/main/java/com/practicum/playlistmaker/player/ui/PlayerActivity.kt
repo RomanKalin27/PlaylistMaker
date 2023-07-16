@@ -7,10 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.presentation.PlayerVM
-import com.practicum.playlistmaker.player.presentation.PlayerVMFactory
+import com.practicum.playlistmaker.player.presentation.PlayerViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
     private val playBtn: ImageButton by lazy {
@@ -49,7 +48,7 @@ class PlayerActivity : AppCompatActivity() {
     private val timePlayed: TextView by lazy {
         findViewById(R.id.timePlayed)
     }
-    private val vm by lazy { ViewModelProvider(this, PlayerVMFactory(this))[PlayerVM::class.java] }
+    private val vm by viewModel<PlayerViewModel>()
     private val track by lazy { vm.returnScreenState().value!!.track }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,6 +101,7 @@ class PlayerActivity : AppCompatActivity() {
         releaseDate.text = track.releaseDate
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
+
         vm.preparePlayer()
         playBtn.setOnClickListener {
             vm.playbackControl()
@@ -111,8 +111,14 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+
+    override fun onPause() {
+        super.onPause()
+        vm.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         vm.onDestroy()
     }
 }

@@ -5,10 +5,9 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.settings.presentation.SettingVM
-import com.practicum.playlistmaker.settings.presentation.SettingVMFactory
+import com.practicum.playlistmaker.settings.presentation.SettingViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingActivity : AppCompatActivity() {
     private val goBackBtn by lazy { findViewById<ImageButton>(R.id.goBackBtn) }
@@ -16,12 +15,7 @@ class SettingActivity : AppCompatActivity() {
     private val shareBtn by lazy { findViewById<Button>(R.id.shareBtn) }
     private val supportBtn by lazy { findViewById<Button>(R.id.supportBtn) }
     private val agreementBtn by lazy { findViewById<Button>(R.id.agreementBtn) }
-    private val vm by lazy {
-        ViewModelProvider(
-            this,
-            SettingVMFactory(this)
-        )[SettingVM::class.java]
-    }
+    private val vm by viewModel<SettingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
