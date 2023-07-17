@@ -13,6 +13,13 @@ class PlaylistsFragment : Fragment() {
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModel<PlaylistsFragmentViewModel>()
+
+    companion object {
+        fun newInstance() = PlaylistsFragment().apply {
+            arguments = Bundle().apply {}
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

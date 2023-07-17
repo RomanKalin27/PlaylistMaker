@@ -5,15 +5,15 @@ import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.api.TrackRepository
 
 class GetHistoryUseCase(val trackRepository: TrackRepository) {
-    private val savedhistoryList = ArrayList<Track>()
-    private val intArray = ArrayList<Int>()
+    private val savedHistoryList = ArrayList<Track>()
+    private val trackNumbers = ArrayList<Int>()
     fun execute(): ArrayList<Track> {
-        intArray.addAll(0..9)
-        intArray.forEach() {
+        trackNumbers.addAll(0..9)
+        trackNumbers.forEach() {
             if ((trackRepository.getHistoryStrings(it)) !== null)
-                savedhistoryList.add(it, createTrackFromJson(trackRepository.getHistoryStrings(it)))
+                savedHistoryList.add(it, createTrackFromJson(trackRepository.getHistoryStrings(it)))
         }
-        return savedhistoryList
+        return savedHistoryList
     }
 
     private fun createTrackFromJson(json: String?): Track {
