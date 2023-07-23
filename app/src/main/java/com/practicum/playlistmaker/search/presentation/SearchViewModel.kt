@@ -78,7 +78,7 @@ class SearchViewModel(
     }
 
     fun getHistory() {
-        screenState.value?.historyList?.addAll(getHistoryUseCase.execute())
+        screenState.value?.historyList = getHistoryUseCase.execute()
     }
 
     fun saveTrack(track: Track, historyList: ArrayList<Track>) {
