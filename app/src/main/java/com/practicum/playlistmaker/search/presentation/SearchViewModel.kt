@@ -1,5 +1,8 @@
 package com.practicum.playlistmaker.search.presentation
 
+
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,8 +24,12 @@ class SearchViewModel(
     private val removeTracksUseCase: RemoveTracksUseCase,
     private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
+    private val searchRunnable = Runnable { getTrack(searchInput) }
+    private val handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
+    private val historyList = getHistoryUseCase.execute()
+    private var searchScreen = SearchState(SEARCH_RESULTS, historyList)
     private var searchInput = ""
-    private var searchScreen = SearchState(SEARCH_RESULTS)
     private val screenState = MutableLiveData<SearchState>()
 
     init {
@@ -40,28 +47,22 @@ class SearchViewModel(
             }
 
             LOADING_STATE -> {
-                screenState.postValue(SearchState(LOADING_STATE))
+                screenState.postValue(SearchState(LOADING_STATE, historyList))
             }
 
             NOTHING_FOUND -> {
-                screenState.postValue(SearchState(NOTHING_FOUND))
+                screenState.postValue(SearchState(NOTHING_FOUND, historyList))
             }
 
             NO_CONNECTION -> {
-                screenState.postValue(SearchState(NO_CONNECTION))
+                screenState.postValue(SearchState(NO_CONNECTION, historyList))
             }
 
             HISTORY_STATE -> {
-                screenState.postValue(SearchState(HISTORY_STATE))
+                screenState.postValue(SearchState(HISTORY_STATE, historyList))
             }
         }
         returnScreenState()
-    }
-
-    fun saveInput(input: String) {
-        searchInput = input
-        screenState.value?.searchInput = input
-
     }
 
     fun clearSearchList() {
@@ -77,17 +78,44 @@ class SearchViewModel(
         setState(HISTORY_STATE)
     }
 
-    fun getHistory() {
-        screenState.value?.historyList = getHistoryUseCase.execute()
-    }
-
-    fun saveTrack(track: Track, historyList: ArrayList<Track>) {
+    private fun saveTrack(track: Track, historyList: ArrayList<Track>) {
         saveTrackUseCase.execute(track, historyList)
     }
 
-    fun getTrack() {
+    fun searchDebounce(input: String) {
+        handler.removeCallbacks(searchRunnable)
+        if (input.isNotEmpty()) {
+            searchInput = input
+            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        }
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({
+                isClickAllowed = true
+            }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    fun onSearch(input: String) {
+        if (clickDebounce()) {
+            getTrack(input)
+        }
+    }
+
+    fun onClick(track: Track) {
+        if (clickDebounce()) {
+            saveTrack(track, screenState.value!!.historyList)
+        }
+    }
+
+    fun getTrack(input: String) {
         setState(LOADING_STATE)
-        searchInteractor.searchTracks(searchInput,
+        searchInteractor.searchTracks(input,
             object : SearchInteractor.TracksConsumer {
                 override fun consume(foundMovies: List<Track>) {
                     clearSearchList()
@@ -103,6 +131,11 @@ class SearchViewModel(
                     }
                 }
             })
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
 

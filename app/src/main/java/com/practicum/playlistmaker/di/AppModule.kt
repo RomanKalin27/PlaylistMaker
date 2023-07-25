@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.main.di
+package com.practicum.playlistmaker.di
 
 import com.practicum.playlistmaker.library.presentation.FavoritesFragmentViewModel
 import com.practicum.playlistmaker.library.presentation.LibraryViewModel

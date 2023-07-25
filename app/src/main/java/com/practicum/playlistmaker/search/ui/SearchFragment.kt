@@ -1,9 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -17,7 +14,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -26,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
-import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.models.SearchState
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.presentation.SearchViewModel
@@ -34,17 +29,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
     private lateinit var binding: FragmentSearchBinding
-    private val searchRunnable = Runnable {
-        vm.saveInput(searchEditText.text.toString())
-        vm.getTrack()
-    }
-    private val historyRunnable = Runnable {
-        vm.getHistory()
-        trackAdapter.historyList = vm.returnScreenState().value!!.historyList
-        vm.loadHistory()
-    }
-    private val handler = Handler(Looper.getMainLooper())
-    private var isClickAllowed = true
     private val trackAdapter by lazy { TrackAdapter(this) }
     private lateinit var searchEditText: EditText
     private lateinit var deleteBtn: ImageButton
@@ -65,13 +49,13 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         searchEditText = binding.searchBar
         deleteBtn = binding.deleteBtn
         searchRecycler = binding.recyclerView
@@ -84,6 +68,9 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
         placeholderImage = binding.placeholderImage
         refreshBtn = binding.refreshBtn
         progressBar = binding.progressBar
+        if (savedInstanceState != null) {
+            searchEditText.setText(savedInstanceState.getString(SAVE_INPUT, ""))
+        }
         vm.returnScreenState().observe(viewLifecycleOwner) {
             searchRecycler.isVisible = false
             progressBar.isVisible = false
@@ -120,14 +107,15 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
                 }
 
                 SearchState.HISTORY_STATE -> {
-                    if (trackAdapter.historyList.isNotEmpty()) {
+                    if (it.historyList.isNotEmpty()) {
+                        trackAdapter.historyList = it.historyList
                         trackAdapter.trackList = trackAdapter.historyList
                         searchHistory.isVisible = true
                     }
                 }
             }
         }
-        getHistory()
+
         searchRecycler.adapter = trackAdapter
         searchRecycler.layoutManager = LinearLayoutManager(requireContext())
         historyRecycler.adapter = trackAdapter
@@ -135,16 +123,15 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
 
         searchEditText.setText(vm.returnScreenState().value?.searchInput)
         refreshBtn.setOnClickListener {
-            vm.saveInput(searchEditText.text.toString())
-            vm.getTrack()
+            vm.getTrack(searchEditText.text.toString())
         }
         deleteBtn.isGone = true
-        deleteBtn.setOnClickListener() {
+        deleteBtn.setOnClickListener {
             searchEditText.text.clear()
             vm.loadHistory()
         }
 
-        clearHistory.setOnClickListener() {
+        clearHistory.setOnClickListener {
             trackAdapter.clearAdapter()
             vm.clearHistoryList()
         }
@@ -161,13 +148,12 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
                     vm.loadHistory()
                 }
                 deleteBtn.isGone = searchEditText.text.toString().trim().isEmpty()
-                searchDebounce()
+                vm.searchDebounce(searchEditText.text.toString())
             }
         })
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (clickDebounce() && actionId == EditorInfo.IME_ACTION_DONE) {
-                vm.saveInput(searchEditText.text.toString())
-                vm.getTrack()
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                vm.onSearch(searchEditText.text.toString())
                 true
             }
             false
@@ -175,45 +161,16 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
     }
 
     override fun onClick(track: Track) {
-        if (clickDebounce()) {
-            vm.saveTrack(track, trackAdapter.historyList)
-            val trackIntent = Intent(requireContext(), PlayerActivity::class.java)
-            this.startActivity(trackIntent)
-            trackAdapter.notifyDataSetChanged()
-        }
+        vm.onClick(track)
+        trackAdapter.notifyDataSetChanged()
     }
 
-    private fun getHistory() {
-        handler.postDelayed(historyRunnable, HISTORY_DELAY)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SAVE_INPUT, searchEditText.text.toString())
     }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        if (searchEditText.text.isNotEmpty())
-            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({
-                isClickAllowed = true
-            }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        vm.saveInput(searchEditText.text.toString())
-    }
-
 
     companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-        private const val HISTORY_DELAY = 300L
+        private const val SAVE_INPUT = "SAVE_INPUT"
     }
 }

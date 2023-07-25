@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker.app
 
 import android.app.Application
-import com.practicum.playlistmaker.main.di.appModule
-import com.practicum.playlistmaker.main.di.dataModule
-import com.practicum.playlistmaker.main.di.domainModule
+import com.practicum.playlistmaker.di.appModule
+import com.practicum.playlistmaker.di.dataModule
+import com.practicum.playlistmaker.di.domainModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

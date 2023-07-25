@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.main.di
+package com.practicum.playlistmaker.di
 
 import android.media.MediaPlayer
 import com.practicum.playlistmaker.R
@@ -58,7 +58,7 @@ val domainModule = module {
         SaveThemeUseCase(themeRepository = get())
     }
     factory {
-        SaveTrackUseCase(trackRepository = get(), gson = get())
+        SaveTrackUseCase(trackRepository = get(), gson = get(), context = get())
     }
     factory {
         GetHistoryUseCase(trackRepository = get())
