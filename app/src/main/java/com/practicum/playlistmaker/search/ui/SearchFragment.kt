@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
+import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.models.SearchState
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.presentation.SearchViewModel
@@ -42,6 +44,7 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
     private lateinit var placeholderImage: ImageView
     private lateinit var refreshBtn: Button
     private lateinit var progressBar: ProgressBar
+    private var isClickAllowed = true
 
     private val vm by viewModel<SearchViewModel>()
     override fun onCreateView(
@@ -76,7 +79,7 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
             progressBar.isVisible = false
             placeholder.isVisible = false
             searchHistory.isVisible = false
-
+            isClickAllowed = it.isClickAllowed
             when (it.state) {
                 SearchState.SEARCH_RESULTS -> {
                     trackAdapter.trackList = it.searchList
@@ -155,14 +158,19 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 vm.onSearch(searchEditText.text.toString())
                 true
+            } else {
+                false
             }
-            false
         }
     }
 
     override fun onClick(track: Track) {
         vm.onClick(track)
-        trackAdapter.notifyDataSetChanged()
+        if (isClickAllowed) {
+            val trackIntent = Intent(requireContext(), PlayerActivity::class.java)
+            this.startActivity(trackIntent)
+            trackAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -5,6 +5,7 @@ class SearchState(
     val state: Int,
     val historyList: ArrayList<Track>,
 ) {
+    var isClickAllowed = true
     var searchList = ArrayList<Track>()
     var searchInput = ""
 

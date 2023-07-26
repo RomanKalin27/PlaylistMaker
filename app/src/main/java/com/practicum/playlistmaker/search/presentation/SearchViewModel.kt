@@ -26,7 +26,6 @@ class SearchViewModel(
 ) : ViewModel() {
     private val searchRunnable = Runnable { getTrack(searchInput) }
     private val handler = Handler(Looper.getMainLooper())
-    private var isClickAllowed = true
     private val historyList = getHistoryUseCase.execute()
     private var searchScreen = SearchState(SEARCH_RESULTS, historyList)
     private var searchInput = ""
@@ -91,11 +90,11 @@ class SearchViewModel(
     }
 
     private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
+        val current = screenState.value!!.isClickAllowed
+        if (screenState.value!!.isClickAllowed) {
+            screenState.value!!.isClickAllowed = false
             handler.postDelayed({
-                isClickAllowed = true
+                screenState.value!!.isClickAllowed = true
             }, CLICK_DEBOUNCE_DELAY)
         }
         return current
@@ -108,6 +107,7 @@ class SearchViewModel(
     }
 
     fun onClick(track: Track) {
+        returnScreenState()
         if (clickDebounce()) {
             saveTrack(track, screenState.value!!.historyList)
         }

@@ -58,7 +58,7 @@ val domainModule = module {
         SaveThemeUseCase(themeRepository = get())
     }
     factory {
-        SaveTrackUseCase(trackRepository = get(), gson = get(), context = get())
+        SaveTrackUseCase(trackRepository = get(), gson = get())
     }
     factory {
         GetHistoryUseCase(trackRepository = get())
