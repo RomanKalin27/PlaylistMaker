@@ -1,40 +1,106 @@
 package com.practicum.playlistmaker.player.presentation
 
-import android.os.Handler
-import android.os.Looper
+import android.media.MediaPlayer
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.models.PlayerState
 import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import com.practicum.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor,
     private val trackRepository: TrackRepository,
 ) : ViewModel() {
-    private val handler = Handler(Looper.getMainLooper())
-    private val setTimeRunnable = Runnable { getPlayerState() }
-    private val screenState = MutableLiveData<PlayerState>()
-    private val screen = PlayerState()
+    private var timerJob: Job? = null
+    private var mediaPlayer: MediaPlayer = MediaPlayer()
+    private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
+    private val url = trackRepository.getPreviewUrl()
+    fun observePlayerState(): LiveData<PlayerState> = playerState
 
     init {
         loadTrack()
-        setTimeRunnable.run()
+        initMediaPlayer()
     }
 
-    fun returnScreenState(): LiveData<PlayerState> {
-        screenState.value = screen
-        return screenState
+    override fun onCleared() {
+        super.onCleared()
+        releasePlayer()
+    }
+
+    fun onPause() {
+        pausePlayer()
+    }
+
+    fun onPlayButtonClicked() {
+        when (playerState.value) {
+            is PlayerState.Playing -> {
+                pausePlayer()
+            }
+
+            is PlayerState.Prepared, is PlayerState.Paused -> {
+                startPlayer()
+            }
+
+            else -> {}
+        }
+    }
+
+    private fun initMediaPlayer() {
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playerState.postValue(PlayerState.Prepared())
+        }
+        mediaPlayer.setOnCompletionListener {
+            timerJob?.cancel()
+            playerState.postValue(PlayerState.Prepared())
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition()))
+        startTimer()
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        timerJob?.cancel()
+        playerState.postValue(PlayerState.Paused(getCurrentPlayerPosition()))
+    }
+
+    private fun releasePlayer() {
+        mediaPlayer.stop()
+        mediaPlayer.release()
+        playerState.value = PlayerState.Default()
+    }
+
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (mediaPlayer.isPlaying) {
+                delay(TIMER_DELAY)
+                playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition()))
+            }
+        }
+    }
+
+    private fun getCurrentPlayerPosition(): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+            ?: "00:00"
     }
 
     private fun loadTrack() {
-        screen.track = Track(
+        playerState.value?.track = Track(
             0, trackRepository.getTrackName()!!,
             trackRepository.getArtistName()!!,
             trackRepository.getTrackTime()!!,
@@ -45,19 +111,6 @@ class PlayerViewModel(
             trackRepository.getCountry()!!,
             ""
         )
-        returnScreenState()
-    }
-
-    private fun getPlayerState() {
-        screen.playerState = playerInteractor.returnPlayerState()
-        setTime()
-        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
-        returnScreenState()
-    }
-
-    private fun setTime() {
-        screen.timePlayed = playerInteractor.setTime()
-        returnScreenState()
     }
 
     fun getArtwork(artwork: ImageView) {
@@ -67,36 +120,15 @@ class PlayerViewModel(
                     ?.replaceAfterLast('/', "512x512bb.jpg")
             )
             .placeholder(R.drawable.ic_player_placeholder)
-            .transform(RoundedCorners(
-                artwork.resources.getDimensionPixelSize(R.dimen.artwork_corner_r)
-            ))
+            .transform(
+                RoundedCorners(
+                    artwork.resources.getDimensionPixelSize(R.dimen.artwork_corner_r)
+                )
+            )
             .into(artwork)
     }
 
-
-    fun preparePlayer() {
-        playerInteractor.preparePlayer()
-    }
-
-    fun playbackControl() {
-        playerInteractor.playbackControl()
-    }
-
-    fun onDestroy() {
-        handler.removeCallbacks(setTimeRunnable)
-        playerInteractor.onDestroy()
-    }
-
-    fun onPause() {
-        if (screen.playerState == STATE_PLAYING) {
-            playerInteractor.pausePlayer()
-        }
-
-    }
-
-
     companion object {
-        private const val SET_TIME_DELAY = 400L
-        private const val STATE_PLAYING = 2
+        private const val TIMER_DELAY = 300L
     }
 }

@@ -49,45 +49,36 @@ class PlayerActivity : AppCompatActivity() {
         findViewById(R.id.timePlayed)
     }
     private val vm by viewModel<PlayerViewModel>()
-    private val track by lazy { vm.returnScreenState().value!!.track }
+    private val track by lazy { vm.observePlayerState().value!!.track }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        vm.returnScreenState().observe(this) {
-            when (it.playerState) {
-                1 -> {
-                    playBtn.isEnabled = true
-                    playBtn.setImageDrawable(
-                        AppCompatResources.getDrawable(
-                            this,
-                            R.drawable.ic_play
-                        )
-                    )
-                    timePlayed.text = getString(R.string.time)
-                }
-
-                2 -> {
-                    playBtn.setImageDrawable(
-                        AppCompatResources.getDrawable(
-                            this,
-                            R.drawable.ic_pause
-                        )
-                    )
-                    timePlayed.text = it.timePlayed
-                }
-
-                3 -> {
-
-                    playBtn.setImageDrawable(
-                        AppCompatResources.getDrawable(
-                            this,
-                            R.drawable.ic_play
-                        )
-                    )
-                }
-            }
+        goBackBtn.setOnClickListener {
+            finish()
+        }
+        playBtn.setOnClickListener {
+            vm.onPlayButtonClicked()
         }
 
+        vm.observePlayerState().observe(this) {
+            playBtn.isEnabled = it.isPlayButtonEnabled
+            timePlayed.text = it.progress
+            if (it.isPaused) {
+                playBtn.setImageDrawable(
+                    AppCompatResources.getDrawable(
+                        this,
+                        R.drawable.ic_play
+                    )
+                )
+            } else {
+                playBtn.setImageDrawable(
+                    AppCompatResources.getDrawable(
+                        this,
+                        R.drawable.ic_pause
+                    )
+                )
+            }
+        }
 
         trackName.text = track.trackName
         artistName.text = track.artistName
@@ -101,24 +92,11 @@ class PlayerActivity : AppCompatActivity() {
         releaseDate.text = track.releaseDate
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
-
-        vm.preparePlayer()
-        playBtn.setOnClickListener {
-            vm.playbackControl()
-        }
-        goBackBtn.setOnClickListener {
-            finish()
-        }
     }
 
 
     override fun onPause() {
         super.onPause()
         vm.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        vm.onDestroy()
     }
 }

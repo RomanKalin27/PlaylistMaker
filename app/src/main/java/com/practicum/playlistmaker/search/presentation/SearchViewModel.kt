@@ -1,11 +1,10 @@
 package com.practicum.playlistmaker.search.presentation
 
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.models.SearchState
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.HISTORY_STATE
@@ -17,6 +16,7 @@ import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
 import com.practicum.playlistmaker.search.domain.usecases.RemoveTracksUseCase
 import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val getHistoryUseCase: GetHistoryUseCase,
@@ -24,11 +24,8 @@ class SearchViewModel(
     private val removeTracksUseCase: RemoveTracksUseCase,
     private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
-    private val searchRunnable = Runnable { getTrack(searchInput) }
-    private val handler = Handler(Looper.getMainLooper())
-    private val historyList = getHistoryUseCase.execute()
+    private var historyList = getHistoryUseCase.execute()
     private var searchScreen = SearchState(SEARCH_RESULTS, historyList)
-    private var searchInput = ""
     private val screenState = MutableLiveData<SearchState>()
 
     init {
@@ -58,6 +55,7 @@ class SearchViewModel(
             }
 
             HISTORY_STATE -> {
+                historyList = getHistoryUseCase.execute()
                 screenState.postValue(SearchState(HISTORY_STATE, historyList))
             }
         }
@@ -77,50 +75,19 @@ class SearchViewModel(
         setState(HISTORY_STATE)
     }
 
-    private fun saveTrack(track: Track, historyList: ArrayList<Track>) {
+     fun saveTrack(track: Track, historyList: ArrayList<Track>) {
         saveTrackUseCase.execute(track, historyList)
-    }
-
-    fun searchDebounce(input: String) {
-        handler.removeCallbacks(searchRunnable)
-        if (input.isNotEmpty()) {
-            searchInput = input
-            handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-        }
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = screenState.value!!.isClickAllowed
-        if (screenState.value!!.isClickAllowed) {
-            screenState.value!!.isClickAllowed = false
-            handler.postDelayed({
-                screenState.value!!.isClickAllowed = true
-            }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    fun onSearch(input: String) {
-        if (clickDebounce()) {
-            getTrack(input)
-        }
-    }
-
-    fun onClick(track: Track) {
-        returnScreenState()
-        if (clickDebounce()) {
-            saveTrack(track, screenState.value!!.historyList)
-        }
     }
 
     fun getTrack(input: String) {
         setState(LOADING_STATE)
-        searchInteractor.searchTracks(input,
-            object : SearchInteractor.TracksConsumer {
-                override fun consume(foundMovies: List<Track>) {
+        viewModelScope.launch {
+            searchInteractor
+                .searchTracks(input)
+                .collect {
                     clearSearchList()
-                    if (foundMovies.isNotEmpty()) {
-                        searchScreen.searchList.addAll(foundMovies)
+                    if (it.isNotEmpty()) {
+                        searchScreen.searchList.addAll(it)
                         setState(SEARCH_RESULTS)
                     } else {
                         if (searchInteractor.isOnline()) {
@@ -130,12 +97,7 @@ class SearchViewModel(
                         }
                     }
                 }
-            })
-    }
-
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+                }
     }
 }
 

@@ -26,7 +26,7 @@ val appModule = module {
     }
     viewModel {
         PlayerViewModel(
-            playerInteractor = get(),
+           // playerInteractor = get(),
             trackRepository = get(),
         )
     }
