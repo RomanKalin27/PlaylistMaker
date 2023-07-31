@@ -62,7 +62,7 @@ class TrackAdapter(
         fun bind(item: Track) {
             trackName.text = item.trackName
             trackTime.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis.toInt())
+                SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis?.toInt())
             artistName.text = item.artistName
             Glide.with(artwork)
                 .load(item.artworkUrl100)

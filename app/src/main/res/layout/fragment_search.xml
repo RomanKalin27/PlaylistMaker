@@ -9,10 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/goBackBtn"
-            style="@style/goBackBtnStyle" />
-
         <TextView
             style="@style/headlineText"
             android:text="@string/search" />
@@ -103,7 +99,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:layout_constraintHeight_max="540dp"
+            app:layout_constraintHeight_max="450dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_history_text"
             tools:listitem="@layout/track_card" />

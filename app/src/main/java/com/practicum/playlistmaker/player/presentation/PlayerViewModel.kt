@@ -67,7 +67,9 @@ class PlayerViewModel(
                     ?.replaceAfterLast('/', "512x512bb.jpg")
             )
             .placeholder(R.drawable.ic_player_placeholder)
-            .transform(RoundedCorners(8))
+            .transform(RoundedCorners(
+                artwork.resources.getDimensionPixelSize(R.dimen.artwork_corner_r)
+            ))
             .into(artwork)
     }
 

@@ -15,7 +15,7 @@ class FavoritesFragment : Fragment() {
     private val vm by viewModel<FavoritesFragmentViewModel>()
 
     companion object {
-        fun newInstance() = FavoritesFragment().apply {
+        fun newInstance() = FavoritesFragment().apply{
             arguments = Bundle().apply {}
         }
     }

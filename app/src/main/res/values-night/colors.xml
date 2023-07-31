@@ -15,4 +15,6 @@
     <color name="blue2">#483772E7</color>
     <color name="black_white">#FFFFFFFF</color>
     <color name="trans_gray">#40FFFFFF</color>
+    <color name="white_black">#1A1B22</color>
+    <color name="trans_white">#FFFFFFFF</color>
 </resources>

@@ -1,12 +1,7 @@
-package com.practicum.playlistmaker.main.di
+package com.practicum.playlistmaker.di
 
 import android.media.MediaPlayer
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.main.data.MenuInteractorImpl
-import com.practicum.playlistmaker.main.domain.api.MenuInteractor
-import com.practicum.playlistmaker.main.domain.usecases.LibraryIntentUseCase
-import com.practicum.playlistmaker.main.domain.usecases.SearchIntentUseCase
-import com.practicum.playlistmaker.main.domain.usecases.SettingsIntentUseCase
 import com.practicum.playlistmaker.player.data.PlayerInteractorImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
@@ -26,9 +21,6 @@ import org.koin.dsl.module
 
 
 val domainModule = module {
-    single<MenuInteractor> {
-        MenuInteractorImpl(context = get())
-    }
     factory<PlayerInteractor> {
         PlayerInteractorImpl(
             context = get(),
@@ -39,15 +31,6 @@ val domainModule = module {
     }
     factory<SearchInteractor>{
         SearchInteractorImpl(repository = get())
-    }
-    factory {
-        SettingsIntentUseCase(menuInteractor = get())
-    }
-    factory {
-        SearchIntentUseCase(menuInteractor = get())
-    }
-    factory{
-        LibraryIntentUseCase(menuInteractor = get())
     }
     single<SettingsInteractor> {
         SettingsInteractorImpl(

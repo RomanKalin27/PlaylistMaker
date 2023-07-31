@@ -5,7 +5,10 @@ import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import com.practicum.playlistmaker.search.domain.models.Track
 
 
-class SaveTrackUseCase(val trackRepository: TrackRepository, private val gson: Gson) {
+class SaveTrackUseCase(
+    val trackRepository: TrackRepository,
+    private val gson: Gson,
+) {
     fun execute(track: Track, historyList: ArrayList<Track>) {
         if (historyList.contains((track))) {
             historyList.remove(track)

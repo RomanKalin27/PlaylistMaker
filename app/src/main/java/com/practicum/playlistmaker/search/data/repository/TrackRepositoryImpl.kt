@@ -11,14 +11,14 @@ class TrackRepositoryImpl(
 ) : TrackRepository {
     override fun saveTrack(track: Track, index: Int, trackString: String) {
         val trackTime =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis.toInt())
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis?.toInt())
         sharedPrefs.edit()
             .putString(TRACK_NAME, track.trackName)
             .putString(ARTIST_NAME, track.artistName)
             .putString(ARTWORK, track.artworkUrl100)
             .putString(TRACK_TIME, trackTime.toString())
             .putString(COLLECTION_NAME, track.collectionName)
-            .putString(RELEASE_DATE, track.releaseDate.substring(0, 4))
+            .putString(RELEASE_DATE, track.releaseDate?.substring(0, 4))
             .putString(PRIMARY_GENRE_NAME, track.primaryGenreName)
             .putString(COUNTRY, track.country)
             .putString(PREVIEW_URL, track.previewUrl)

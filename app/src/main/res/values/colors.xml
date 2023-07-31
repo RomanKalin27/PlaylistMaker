@@ -16,4 +16,6 @@
     <color name="black_white">#1A1B22</color>
     <color name="trans_gray">#401A1B22</color>
     <color name="dark_blue">#6200EE</color>
+    <color name="white_black">#FFFFFFFF</color>
+    <color name="trans_white">#00000000</color>
 </resources>

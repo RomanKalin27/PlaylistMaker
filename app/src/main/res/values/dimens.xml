@@ -26,4 +26,5 @@
     <dimen name="dot_margin">6dp</dimen>
     <dimen name="roundBtn_height">36dp</dimen>
     <dimen name="artwork_side">312dp</dimen>
+    <dimen name="artwork_corner_r">8dp</dimen>
 </resources>
