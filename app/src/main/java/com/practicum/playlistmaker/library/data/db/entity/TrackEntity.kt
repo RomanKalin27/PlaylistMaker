@@ -1,7 +1,12 @@
-package com.practicum.playlistmaker.search.data.dto
+package com.practicum.playlistmaker.search.data.db.entity
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class TrackDto(
+@Entity(tableName = "track_table")
+data class TrackEntity(
+    @PrimaryKey(autoGenerate = true)
+    val dbId: Int = 0,
     val trackId: Long,
     val trackName: String,
     val artistName: String,
@@ -12,5 +17,5 @@ data class TrackDto(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String?,
-    var isFavorite: Boolean = false,
+    val isFavorite: Boolean,
 )

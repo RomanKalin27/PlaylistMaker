@@ -75,18 +75,22 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
         placeholderImage = binding.placeholderImage
         refreshBtn = binding.refreshBtn
         progressBar = binding.progressBar
+
         onClickDebounce = debounce(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) {
             isClickAllowed = true
         }
+
         onSearchDebounce =
             debounce(SEARCH_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, true) {
                 if (it.isNotEmpty()) {
                     vm.getTrack(it)
                 }
             }
+
         if (savedInstanceState != null) {
             searchEditText.setText(savedInstanceState.getString(SAVE_INPUT, ""))
         }
+
         vm.returnScreenState().observe(viewLifecycleOwner) {
             searchRecycler.isVisible = false
             progressBar.isVisible = false
@@ -187,7 +191,8 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
             onClickDebounce(isClickAllowed)
             vm.saveTrack(track, trackAdapter.historyList)
             val trackIntent = Intent(requireContext(), PlayerActivity::class.java)
-            this.startActivity(trackIntent)
+            trackIntent.putExtra(TRACK, track)
+            requireContext().startActivity(trackIntent)
             trackAdapter.notifyDataSetChanged()
         }
     }
@@ -201,5 +206,6 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SAVE_INPUT = "SAVE_INPUT"
+        const val TRACK = "TRACK"
     }
 }

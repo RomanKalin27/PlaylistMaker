@@ -104,7 +104,6 @@
         <item name="android:background">@drawable/circle</item>
         <item name="android:layout_marginBottom">29dp</item>
         <item name="backgroundTint">@color/trans_gray</item>
-        <item name="tint">@color/white</item>
     </style>
 
     <style name="tabLayoutText">

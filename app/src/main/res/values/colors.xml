@@ -18,4 +18,5 @@
     <color name="dark_blue">#6200EE</color>
     <color name="white_black">#FFFFFFFF</color>
     <color name="trans_white">#00000000</color>
+    <color name="red">#F56B6C</color>
 </resources>

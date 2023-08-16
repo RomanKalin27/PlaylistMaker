@@ -61,8 +61,15 @@ class TrackAdapter(
         private val artistName: TextView = itemView.findViewById(R.id.card_artist_name)
         fun bind(item: Track) {
             trackName.text = item.trackName
-            trackTime.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis?.toInt())
+            if (item.trackTimeMillis?.contains(":") == true) {
+                trackTime.text = item.trackTimeMillis
+            } else {
+                trackTime.text = SimpleDateFormat(
+                    "mm:ss",
+                    Locale.getDefault()
+                ).format(item.trackTimeMillis?.toInt())
+            }
+            // SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis?.toInt())
             artistName.text = item.artistName
             Glide.with(artwork)
                 .load(item.artworkUrl100)

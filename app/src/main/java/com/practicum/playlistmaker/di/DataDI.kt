@@ -2,9 +2,14 @@ package com.practicum.playlistmaker.di
 
 import android.app.Application
 import android.content.SharedPreferences
+import androidx.room.Room
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.app.App.Companion.SHARED_PREFS
+import com.practicum.playlistmaker.library.data.TrackDbConvertor
+import com.practicum.playlistmaker.library.data.db.AppDatabase
+import com.practicum.playlistmaker.library.data.repository.FavoritesRepositoryImpl
+import com.practicum.playlistmaker.library.domain.db.FavoritesRepository
 import com.practicum.playlistmaker.search.data.network.NetworkClient
 import com.practicum.playlistmaker.search.data.network.TrackSearcher
 import com.practicum.playlistmaker.search.data.repository.TrackRepositoryImpl
@@ -32,7 +37,7 @@ val dataModule = module {
         ThemeRepositoryImpl(sharedPrefs = get())
     }
     single<SearchRepository> {
-        SearchRepositoryImpl(networkClient = get())
+        SearchRepositoryImpl(networkClient = get(),)
     }
     single<NetworkClient> {
         TrackSearcher(androidContext(), itunesService = get())
@@ -47,4 +52,12 @@ val dataModule = module {
     single {
         Gson()
     }
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
+    }
+    single<FavoritesRepository> {
+        FavoritesRepositoryImpl(get(), get())
+    }
+    factory { TrackDbConvertor() }
 }

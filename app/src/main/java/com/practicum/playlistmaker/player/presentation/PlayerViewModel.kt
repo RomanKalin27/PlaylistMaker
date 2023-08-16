@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.player.presentation
 
 import android.media.MediaPlayer
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,8 +10,9 @@ import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.library.data.db.AppDatabase
+import com.practicum.playlistmaker.library.domain.db.FavoritesInteractor
 import com.practicum.playlistmaker.player.domain.models.PlayerState
-import com.practicum.playlistmaker.search.domain.api.TrackRepository
 import com.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -19,18 +21,15 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(
-    private val trackRepository: TrackRepository,
+    private val favoritesInteractor: FavoritesInteractor,
+    private val appDatabase: AppDatabase,
 ) : ViewModel() {
     private var timerJob: Job? = null
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
-    private val url = trackRepository.getPreviewUrl()
+    private var loadedTrack = Track(0, "", "", "", "", "", "", "", "", "", false)
     fun observePlayerState(): LiveData<PlayerState> = playerState
 
-    init {
-        loadTrack()
-        initMediaPlayer()
-    }
 
     override fun onCleared() {
         super.onCleared()
@@ -55,7 +54,7 @@ class PlayerViewModel(
         }
     }
 
-    private fun initMediaPlayer() {
+    private fun initMediaPlayer(url: String?) {
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
@@ -99,25 +98,24 @@ class PlayerViewModel(
             ?: "00:00"
     }
 
-    private fun loadTrack() {
-        playerState.value?.track = Track(
-            0, trackRepository.getTrackName()!!,
-            trackRepository.getArtistName()!!,
-            trackRepository.getTrackTime()!!,
-            trackRepository.getArtwork()!!,
-            trackRepository.getCollectionName()!!,
-            trackRepository.getReleaseDate()!!,
-            trackRepository.getPrimaryGenreName()!!,
-            trackRepository.getCountry()!!,
-            ""
-        )
+    fun loadTrack(track: Track, favoriteBtn: ImageButton) {
+        viewModelScope.launch {
+            loadedTrack = track
+            if (appDatabase.trackDao().getTracksIds().contains(loadedTrack.trackId)) {
+                loadedTrack.isFavorite = true
+            } else {
+                loadedTrack.isFavorite = false
+            }
+            favoriteBtnChange(favoriteBtn, false)
+        }
+        initMediaPlayer(track.previewUrl)
     }
 
     fun getArtwork(artwork: ImageView) {
         Glide.with(artwork)
             .load(
-                trackRepository.getArtwork()
-                    ?.replaceAfterLast('/', "512x512bb.jpg")
+                loadedTrack.artworkUrl100
+                    .replaceAfterLast('/', "512x512bb.jpg")
             )
             .placeholder(R.drawable.ic_player_placeholder)
             .transform(
@@ -126,6 +124,28 @@ class PlayerViewModel(
                 )
             )
             .into(artwork)
+    }
+
+    fun favoriteBtnChange(favoriteBtn: ImageButton, isClicked: Boolean) {
+        viewModelScope.launch {
+            if (loadedTrack.isFavorite) {
+                if (isClicked) {
+                    loadedTrack.isFavorite = false
+                    favoritesInteractor.deleteTrack(loadedTrack.trackId)
+                    favoriteBtn.setImageResource(R.drawable.ic_favorite)
+                } else {
+                    favoriteBtn.setImageResource(R.drawable.ic_favorite_filled)
+                }
+            } else {
+                if (isClicked) {
+                    loadedTrack.isFavorite = true
+                    favoritesInteractor.addTrack(loadedTrack)
+                    favoriteBtn.setImageResource(R.drawable.ic_favorite_filled)
+                } else {
+                    favoriteBtn.setImageResource(R.drawable.ic_favorite)
+                }
+            }
+        }
     }
 
     companion object {

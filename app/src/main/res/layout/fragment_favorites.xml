@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/BackgroundStyle">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/black"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favorites_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin16"
+        tools:listitem="@layout/track_card" />
 
     <ImageView
         android:id="@+id/placeholderImage"
@@ -11,6 +27,7 @@
         android:src="@drawable/ic_nothing_found" />
 
     <TextView
+        android:id="@+id/placeholderText"
         style="@style/placeholderText"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/margin16"

@@ -7,6 +7,7 @@ import com.practicum.playlistmaker.search.domain.api.TrackRepository
 class GetHistoryUseCase(val trackRepository: TrackRepository) {
     private val savedHistoryList = ArrayList<Track>()
     private val trackNumbers = ArrayList<Int>()
+
     fun execute(): ArrayList<Track> {
         savedHistoryList.clear()
         trackNumbers.clear()
