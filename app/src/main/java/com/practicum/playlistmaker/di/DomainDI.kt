@@ -2,8 +2,6 @@ package com.practicum.playlistmaker.di
 
 import android.media.MediaPlayer
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.data.PlayerInteractorImpl
-import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
@@ -21,14 +19,6 @@ import org.koin.dsl.module
 
 
 val domainModule = module {
-    factory<PlayerInteractor> {
-        PlayerInteractorImpl(
-            context = get(),
-            sharedPrefs = get(),
-            trackRepository = get(),
-            mediaPlayer = get()
-        )
-    }
     factory<SearchInteractor>{
         SearchInteractorImpl(repository = get())
     }

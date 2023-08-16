@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
@@ -27,6 +28,7 @@ import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.models.SearchState
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.presentation.SearchViewModel
+import com.practicum.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
@@ -45,6 +47,8 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
     private lateinit var refreshBtn: Button
     private lateinit var progressBar: ProgressBar
     private var isClickAllowed = true
+    private lateinit var onClickDebounce: (Boolean) -> Unit
+    private lateinit var onSearchDebounce: (String) -> Unit
 
     private val vm by viewModel<SearchViewModel>()
     override fun onCreateView(
@@ -71,6 +75,15 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
         placeholderImage = binding.placeholderImage
         refreshBtn = binding.refreshBtn
         progressBar = binding.progressBar
+        onClickDebounce = debounce(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) {
+            isClickAllowed = true
+        }
+        onSearchDebounce =
+            debounce(SEARCH_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, true) {
+                if (it.isNotEmpty()) {
+                    vm.getTrack(it)
+                }
+            }
         if (savedInstanceState != null) {
             searchEditText.setText(savedInstanceState.getString(SAVE_INPUT, ""))
         }
@@ -121,13 +134,14 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
 
         searchRecycler.adapter = trackAdapter
         searchRecycler.layoutManager = LinearLayoutManager(requireContext())
+
         historyRecycler.adapter = trackAdapter
         historyRecycler.layoutManager = LinearLayoutManager(requireContext())
 
-        searchEditText.setText(vm.returnScreenState().value?.searchInput)
         refreshBtn.setOnClickListener {
             vm.getTrack(searchEditText.text.toString())
         }
+
         deleteBtn.isGone = true
         deleteBtn.setOnClickListener {
             searchEditText.text.clear()
@@ -150,13 +164,16 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
                 if (searchEditText.hasFocus() && searchEditText.text.isEmpty()) {
                     vm.loadHistory()
                 }
+                onSearchDebounce(searchEditText.text.toString())
                 deleteBtn.isGone = searchEditText.text.toString().trim().isEmpty()
-                vm.searchDebounce(searchEditText.text.toString())
             }
         })
+
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                vm.onSearch(searchEditText.text.toString())
+            if (isClickAllowed && actionId == EditorInfo.IME_ACTION_DONE) {
+                isClickAllowed = false
+                onClickDebounce(isClickAllowed)
+                vm.getTrack(searchEditText.text.toString())
                 true
             } else {
                 false
@@ -165,8 +182,10 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
     }
 
     override fun onClick(track: Track) {
-        vm.onClick(track)
         if (isClickAllowed) {
+            isClickAllowed = false
+            onClickDebounce(isClickAllowed)
+            vm.saveTrack(track, trackAdapter.historyList)
             val trackIntent = Intent(requireContext(), PlayerActivity::class.java)
             this.startActivity(trackIntent)
             trackAdapter.notifyDataSetChanged()
@@ -179,6 +198,8 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
     }
 
     companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SAVE_INPUT = "SAVE_INPUT"
     }
 }

@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.search.data.dto
 
-open class Response() {
+open class Response {
     var resultCode = DEFAULT_CODE
 
     companion object {

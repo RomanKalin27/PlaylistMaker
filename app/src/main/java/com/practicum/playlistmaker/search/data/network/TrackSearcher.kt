@@ -6,23 +6,24 @@ import android.net.NetworkCapabilities
 import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.Response.Companion.BAD_REQUEST_CODE
 import com.practicum.playlistmaker.search.data.dto.Response.Companion.NO_CONNECTION_CODE
+import com.practicum.playlistmaker.search.data.dto.Response.Companion.SUCCESS_CODE
 import com.practicum.playlistmaker.search.data.dto.TrackSearchRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class TrackSearcher(private val context: Context, private val itunesService: TrackApi) :
     NetworkClient {
-    override fun doRequest(dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
         if (!isOnline()) {
             return Response().apply { resultCode = NO_CONNECTION_CODE }
         }
-        if (dto is TrackSearchRequest) {
-            val resp = itunesService.search(dto.expression).execute()
-
-            val body = resp.body() ?: Response()
-
-            return body.apply { resultCode = resp.code() }
-        } else {
-
+        if (dto !is TrackSearchRequest) {
             return Response().apply { resultCode = BAD_REQUEST_CODE }
+        }
+
+        return withContext(Dispatchers.IO) {
+            val response = itunesService.searchNames(dto.expression)
+            response.apply { resultCode = SUCCESS_CODE }
         }
     }
 
