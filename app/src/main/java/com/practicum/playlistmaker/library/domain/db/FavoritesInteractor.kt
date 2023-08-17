@@ -4,7 +4,7 @@ import com.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 
 interface FavoritesInteractor {
-    fun favoriteTracks(): Flow<List<Track>>
+    fun getFavoriteTracks(): Flow<List<Track>>
     suspend fun addTrack(track: Track)
     suspend fun deleteTrack(id: Long)
 }

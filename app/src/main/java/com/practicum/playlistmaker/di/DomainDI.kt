@@ -62,6 +62,6 @@ val domainModule = module {
         MediaPlayer()
     }
     single<FavoritesInteractor> {
-        FavoritesInteractorImpl(get())
+        FavoritesInteractorImpl(favoritesRepository = get())
     }
 }

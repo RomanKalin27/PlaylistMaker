@@ -57,7 +57,7 @@ val dataModule = module {
             .build()
     }
     single<FavoritesRepository> {
-        FavoritesRepositoryImpl(get(), get())
+        FavoritesRepositoryImpl(appDatabase = get(), trackDbConvertor = get())
     }
     factory { TrackDbConvertor() }
 }

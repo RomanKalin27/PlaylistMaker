@@ -26,8 +26,8 @@ val appModule = module {
     }
     viewModel {
         PlayerViewModel(
-            get(),
-            get(),
+            favoritesInteractor = get(),
+            appDatabase = get(),
         )
     }
     viewModel {

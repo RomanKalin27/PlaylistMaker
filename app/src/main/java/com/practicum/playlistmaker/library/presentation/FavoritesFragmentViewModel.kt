@@ -19,7 +19,7 @@ class FavoritesFragmentViewModel(
         renderState(FavoritesState.Loading)
         viewModelScope.launch {
             favoritesInteractor
-                .favoriteTracks()
+                .getFavoriteTracks()
                 .collect { tracks ->
                     processResult(tracks)
                 }

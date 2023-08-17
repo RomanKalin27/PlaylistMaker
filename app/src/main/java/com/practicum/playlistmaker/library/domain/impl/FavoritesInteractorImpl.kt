@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 class FavoritesInteractorImpl(private val favoritesRepository: FavoritesRepository) :
     FavoritesInteractor {
-    override fun favoriteTracks(): Flow<List<Track>> {
+    override fun getFavoriteTracks(): Flow<List<Track>> {
         return favoritesRepository.favoriteTracks()
     }
 
