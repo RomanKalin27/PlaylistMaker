@@ -29,5 +29,21 @@
     <string name="playlistsPlaceholder">Вы не создали\n ни одного плейлиста</string>
     <string name="favorites">Избранные треки</string>
     <string name="playlists">Плейлисты</string>
+    <string name="playlist">Плейлист </string>
+    <string name="created"> создан</string>
     <string name="newPlaylist">Новый плейлист</string>
+    <string name="name">Название*</string>
+    <string name="description">Описание</string>
+    <string name="create">Создать</string>
+    <string name="playlistDialogTitle">Завершить создание плейлиста?</string>
+    <string name="playlistDialogBody">Все несохраненные данные будут потеряны</string>
+    <string name="cancel">Отмена</string>
+    <string name="finish">Завершить</string>
+    <string name="addToPlaylist">Добавить в плейлист</string>
+    <string name="addedToPlaylist">Добавлено в плейлист </string>
+    <string name="hasAlreadyBeenAdded">Трек уже добавлен в плейлист </string>
+    <string name="tracks_a">трека</string>
+    <string name="track_ov">треков</string>
+    <string name="tracks_">трек</string>
+    <string name="images">Images</string>
 </resources>

@@ -13,6 +13,8 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.library.data.db.AppDatabase
 import com.practicum.playlistmaker.library.domain.db.FavoritesInteractor
 import com.practicum.playlistmaker.player.domain.models.PlayerState
+import com.practicum.playlistmaker.playlistCreator.domain.db.PlaylistsInteractor
+import com.practicum.playlistmaker.playlistCreator.domain.models.Playlist
 import com.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -23,13 +25,14 @@ import java.util.Locale
 class PlayerViewModel(
     private val favoritesInteractor: FavoritesInteractor,
     private val appDatabase: AppDatabase,
+    private val playlistsInteractor: PlaylistsInteractor,
 ) : ViewModel() {
     private var timerJob: Job? = null
+    private var playlists = listOf<Playlist>()
     private var mediaPlayer: MediaPlayer = MediaPlayer()
-    private val playerState = MutableLiveData<PlayerState>(PlayerState.Default())
+    private val playerState = MutableLiveData<PlayerState>(PlayerState.Default(playlists))
     private var loadedTrack = Track(0, "", "", "", "", "", "", "", "", "", false)
     fun observePlayerState(): LiveData<PlayerState> = playerState
-
 
     override fun onCleared() {
         super.onCleared()
@@ -58,37 +61,37 @@ class PlayerViewModel(
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerState.postValue(PlayerState.Prepared())
+            playerState.postValue(PlayerState.Prepared(playlists))
         }
         mediaPlayer.setOnCompletionListener {
             timerJob?.cancel()
-            playerState.postValue(PlayerState.Prepared())
+            playerState.postValue(PlayerState.Prepared(playlists))
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition()))
+        playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition(), playlists))
         startTimer()
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
         timerJob?.cancel()
-        playerState.postValue(PlayerState.Paused(getCurrentPlayerPosition()))
+        playerState.postValue(PlayerState.Paused(getCurrentPlayerPosition(), playlists))
     }
 
     private fun releasePlayer() {
         mediaPlayer.stop()
         mediaPlayer.release()
-        playerState.value = PlayerState.Default()
+        playerState.value = PlayerState.Default(playlists)
     }
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
                 delay(TIMER_DELAY)
-                playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition()))
+                playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition(), playlists))
             }
         }
     }
@@ -101,11 +104,8 @@ class PlayerViewModel(
     fun loadTrack(track: Track, favoriteBtn: ImageButton) {
         viewModelScope.launch {
             loadedTrack = track
-            if (appDatabase.trackDao().getTracksIds().contains(loadedTrack.trackId)) {
-                loadedTrack.isFavorite = true
-            } else {
-                loadedTrack.isFavorite = false
-            }
+            loadedTrack.isFavorite =
+                appDatabase.trackDao().getTracksIds().contains(loadedTrack.trackId)
             favoriteBtnChange(favoriteBtn, false)
         }
         initMediaPlayer(track.previewUrl)
@@ -145,6 +145,26 @@ class PlayerViewModel(
                     favoriteBtn.setImageResource(R.drawable.ic_favorite)
                 }
             }
+        }
+    }
+
+    fun onPlaylistClick(playlist: Playlist, track: Track) {
+        viewModelScope.launch {
+            playlist.trackList.add(track.trackId)
+            playlist.numberOfTracks = playlist.trackList.size
+            playlistsInteractor.addTrackToPlaylist(track)
+            playlistsInteractor.update(playlist.trackList, playlist.numberOfTracks, playlist.dbId)
+        }
+    }
+
+    fun fillData(playlists: ArrayList<Playlist>) {
+        viewModelScope.launch {
+            playlistsInteractor
+                .getPlaylists()
+                .collect {
+                    playlists.clear()
+                    playlists.addAll(it)
+                }
         }
     }
 

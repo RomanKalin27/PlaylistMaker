@@ -111,5 +111,30 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textAllCaps">false</item>
     </style>
+    <style name="new_playlist_edit_text" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_height">63dp</item>
+        <item name="android:layout_width">328dp</item>
+        <item name="android:layout_marginTop">32dp</item>
+        <item name="android:inputType">text</item>
+        <item name="android:textSize">@dimen/text</item>
+        <item name="android:textColor">@color/black_white</item>
+        <item name="android:fontFamily">@font/yandexsansdisplay_regular</item>
+        <item name="android:hint">@string/name</item>
+        <item name="android:textColorHint">@color/black_white</item>
+        <item name="android:singleLine">true</item>
+        <item name="boxStrokeColor">@color/blue</item>
+        <item name="hintTextColor">@color/blue</item>
+    </style>
+    <style name="DialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="colorPrimary">@color/black_white</item>
+    </style>
+    <style name="DialogText" parent="@style/MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/black_white</item>
+    </style>
+    <style name="snackBarText">
+        <item name="android:textSize">@dimen/roundBtn_text</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/white_black</item>
+    </style>
 
 </resources>
