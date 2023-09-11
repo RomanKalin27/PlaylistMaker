@@ -5,8 +5,9 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/refresh_btn"
         style="@style/roundBtn"
-        android:layout_width="132dp"
+        android:layout_width="wrap_content"
         android:layout_gravity="center"
+        android:minWidth="132dp"
         android:text="@string/newPlaylist" />
 
     <ImageView

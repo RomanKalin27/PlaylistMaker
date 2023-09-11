@@ -9,7 +9,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.presentation.PlayerViewModel
+import com.practicum.playlistmaker.search.domain.models.Track
+import com.practicum.playlistmaker.search.ui.SearchFragment.Companion.TRACK
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
     private val playBtn: ImageButton by lazy {
@@ -17,6 +21,9 @@ class PlayerActivity : AppCompatActivity() {
     }
     private val goBackBtn: ImageButton by lazy {
         findViewById(R.id.goBackBtn)
+    }
+    private val favoriteBtn: ImageButton by lazy {
+        findViewById(R.id.favoriteBtn)
     }
     private val artistName: TextView by lazy {
         findViewById(R.id.artistName)
@@ -48,18 +55,22 @@ class PlayerActivity : AppCompatActivity() {
     private val timePlayed: TextView by lazy {
         findViewById(R.id.timePlayed)
     }
+    private val track by lazy { intent.getParcelableExtra<Track>(TRACK) }
     private val vm by viewModel<PlayerViewModel>()
-    private val track by lazy { vm.observePlayerState().value!!.track }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+        vm.loadTrack(track as Track, favoriteBtn)
         goBackBtn.setOnClickListener {
             finish()
         }
         playBtn.setOnClickListener {
             vm.onPlayButtonClicked()
         }
-
+        favoriteBtn.setOnClickListener {
+            vm.favoriteBtnChange(favoriteBtn, true)
+        }
         vm.observePlayerState().observe(this) {
             playBtn.isEnabled = it.isPlayButtonEnabled
             timePlayed.text = it.progress
@@ -79,21 +90,26 @@ class PlayerActivity : AppCompatActivity() {
                 )
             }
         }
-
-        trackName.text = track.trackName
-        artistName.text = track.artistName
+        trackName.text = track?.trackName
+        artistName.text = track?.artistName
         vm.getArtwork(artwork)
-        trackTime.text = track.trackTimeMillis
-        collectionName.text = track.collectionName
+        if (track?.trackTimeMillis?.contains(":") == true) {
+            trackTime.text = track?.trackTimeMillis
+        } else {
+            trackTime.text = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(track?.trackTimeMillis?.toInt())
+        }
+        collectionName.text = track?.collectionName
         if (collectionName.text.contentEquals("${trackName.text} - Single")) {
             collectionName.isVisible = false
             album.isVisible = false
         }
-        releaseDate.text = track.releaseDate
-        primaryGenreName.text = track.primaryGenreName
-        country.text = track.country
+        releaseDate.text = track?.releaseDate?.substring(0, 4)
+        primaryGenreName.text = track?.primaryGenreName
+        country.text = track?.country
     }
-
 
     override fun onPause() {
         super.onPause()

@@ -26,8 +26,8 @@ val appModule = module {
     }
     viewModel {
         PlayerViewModel(
-           // playerInteractor = get(),
-            trackRepository = get(),
+            favoritesInteractor = get(),
+            appDatabase = get(),
         )
     }
     viewModel {
@@ -43,7 +43,7 @@ val appModule = module {
         LibraryViewModel()
     }
     viewModel {
-        FavoritesFragmentViewModel()
+        FavoritesFragmentViewModel(get(),)
     }
     viewModel {
         PlaylistsFragmentViewModel()

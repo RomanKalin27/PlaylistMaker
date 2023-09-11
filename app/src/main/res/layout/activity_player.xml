@@ -50,8 +50,8 @@
         android:layout_width="84dp"
         android:layout_height="84dp"
         android:layout_marginBottom="@dimen/margin12"
-        android:gravity="center|center"
         android:background="@null"
+        android:gravity="center|center"
         app:backgroundTint="?attr/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/timePlayed"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,8 +73,7 @@
         android:layout_marginStart="@dimen/margin64"
         app:layout_constraintBottom_toTopOf="@+id/timePlayed"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/playBtn"
-        app:srcCompat="@drawable/ic_favorite" />
+        app:layout_constraintStart_toEndOf="@+id/playBtn" />
 
     <TextView
         android:id="@+id/timePlayed"

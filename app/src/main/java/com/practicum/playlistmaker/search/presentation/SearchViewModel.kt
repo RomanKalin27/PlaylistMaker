@@ -24,7 +24,7 @@ class SearchViewModel(
     private val removeTracksUseCase: RemoveTracksUseCase,
     private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
-    private var historyList = getHistoryUseCase.execute()
+    private var historyList = ArrayList<Track>()
     private var searchScreen = SearchState(SEARCH_RESULTS, historyList)
     private val screenState = MutableLiveData<SearchState>()
 
@@ -37,6 +37,8 @@ class SearchViewModel(
     }
 
     fun setState(state: Int) {
+        //  viewModelScope.launch {
+        //   getHistoryUseCase.execute().collect() {
         when (state) {
             SEARCH_RESULTS -> {
                 screenState.postValue(searchScreen)
@@ -61,6 +63,8 @@ class SearchViewModel(
         }
         returnScreenState()
     }
+    // }
+    // }
 
     fun clearSearchList() {
         searchScreen.searchList.clear()
@@ -75,7 +79,7 @@ class SearchViewModel(
         setState(HISTORY_STATE)
     }
 
-     fun saveTrack(track: Track, historyList: ArrayList<Track>) {
+    fun saveTrack(track: Track, historyList: ArrayList<Track>) {
         saveTrackUseCase.execute(track, historyList)
     }
 
@@ -97,7 +101,7 @@ class SearchViewModel(
                         }
                     }
                 }
-                }
+        }
     }
 }
 
