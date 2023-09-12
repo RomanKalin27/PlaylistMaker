@@ -12,10 +12,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.player.ui.BottomSheetAdapter
 import com.practicum.playlistmaker.playlistCreator.domain.models.Playlist
 
-class PlaylistAdapter(val playlists: List<Playlist>, val context: Context) :
+class PlaylistAdapter(
+    private val adapterListener: AdapterListener,
+    val playlists: List<Playlist>, val context: Context) :
     RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
+    interface AdapterListener {
+        fun onPlaylistClick(playlist: Playlist)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val view =
@@ -29,6 +35,9 @@ class PlaylistAdapter(val playlists: List<Playlist>, val context: Context) :
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         holder.bind(playlists[position], context)
+        holder.itemView.setOnClickListener {
+            adapterListener.onPlaylistClick(playlists[position])
+        }
     }
 
     class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {

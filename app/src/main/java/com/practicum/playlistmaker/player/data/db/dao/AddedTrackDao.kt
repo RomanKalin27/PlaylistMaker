@@ -12,8 +12,8 @@ interface AddedTrackDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAddedTrack(addedTrackEntity: AddedTrackEntity)
 
-    @Query("SELECT dbId FROM added_track_table")
-    suspend fun getAddedTrackIds(): List<Long>
+    /*@Query("SELECT * FROM added_track_table where ")
+    suspend fun getAddedTracksByIds(ids: List<Long>): List<AddedTrackEntity>*/
 
     @Query("SELECT * FROM added_track_table ORDER BY dbId DESC")
     suspend fun getAddedTrack(): List<AddedTrackEntity>

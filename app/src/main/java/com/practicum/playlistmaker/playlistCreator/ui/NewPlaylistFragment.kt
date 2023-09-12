@@ -75,7 +75,7 @@ class NewPlaylistFragment : Fragment() {
 
         goBackBtn.setOnClickListener {
             if ((playlistDesc.text.toString().isNotEmpty() || playlistName.text.toString()
-                    .isNotEmpty()) && isArtworkPicked
+                    .isNotEmpty()) || isArtworkPicked
             ) {
                 exitDialog.show()
             } else {

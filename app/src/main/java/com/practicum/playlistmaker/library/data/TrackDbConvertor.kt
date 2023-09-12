@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.library.data
 
+import com.practicum.playlistmaker.player.data.db.entity.AddedTrackEntity
 import com.practicum.playlistmaker.search.data.db.entity.TrackEntity
 import com.practicum.playlistmaker.search.domain.models.Track
 
@@ -34,6 +35,22 @@ class TrackDbConvertor {
             track.country,
             track.previewUrl,
             track.isFavorite,
+        )
+    }
+
+    fun map_added(addedTrack: AddedTrackEntity): Track {
+        return Track(
+            addedTrack.trackId,
+            addedTrack.trackName,
+            addedTrack.artistName,
+            addedTrack.trackTimeMillis,
+            addedTrack.artworkUrl100,
+            addedTrack.collectionName,
+            addedTrack.releaseDate,
+            addedTrack.primaryGenreName,
+            addedTrack.country,
+            addedTrack.previewUrl,
+            addedTrack.isFavorite,
         )
     }
 }

@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.view.View
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.library.data.TrackDbConvertor
 import com.practicum.playlistmaker.library.data.db.AppDatabase
 import com.practicum.playlistmaker.player.data.db.entity.AddedTrackEntity
 import com.practicum.playlistmaker.playlistCreator.data.db.PlaylistDbConvertor
@@ -23,6 +24,7 @@ import java.util.UUID
 class PlaylistsRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val playlistDbConvertor:PlaylistDbConvertor,
+    private val trackDbConvertor: TrackDbConvertor,
     private val gson: Gson,
     private val context: Context,
 ) : PlaylistsRepository {
@@ -32,11 +34,15 @@ class PlaylistsRepositoryImpl(
         emit(convertFromPlaylistEntity(playlists))
     }
 
+    override suspend fun getPlaylistById(playlistId: Int): Playlist {
+        return playlistDbConvertor.map(appDatabase.playlistDao().getPlaylistById(playlistId))
+    }
+
     override suspend fun addPlaylist(playlist: Playlist) {
         appDatabase.playlistDao().insertPlaylist(convertFromPlaylist(playlist))
     }
 
-    override suspend fun deletePlaylist(id: Long) {
+    override suspend fun deletePlaylist(id: Int) {
         appDatabase.playlistDao()
             .deletePlaylistEntity(appDatabase.playlistDao().getPlaylistById(id))
     }
@@ -56,6 +62,12 @@ class PlaylistsRepositoryImpl(
             isFavorite = track.isFavorite,
         )
         appDatabase.addedTrackDao().insertAddedTrack(addedTrackEntity)
+    }
+
+    override suspend fun getAddedTracks(ids: List<Long>): ArrayList<Track> {
+        val trackList = ArrayList<Track>()
+        ids.forEach { trackList.add(trackDbConvertor.map_added(appDatabase.addedTrackDao().getAddedTrackById(it))) }
+        return trackList
     }
 
     override suspend fun update(tracklist: ArrayList<Long>, numberOfTracks: Int, playlistId: Int) {
@@ -80,6 +92,7 @@ class PlaylistsRepositoryImpl(
                 }
             }
         }
+
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }

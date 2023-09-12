@@ -68,7 +68,8 @@ val dataModule = module {
             appDatabase = get(),
             playlistDbConvertor = get(),
             gson = get(),
-            androidContext()
+            trackDbConvertor = get(),
+            context = androidContext(),
         )
     }
     factory { PlaylistDbConvertor(Gson()) }

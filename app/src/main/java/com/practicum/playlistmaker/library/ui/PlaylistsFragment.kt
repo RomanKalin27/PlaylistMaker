@@ -16,12 +16,13 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.practicum.playlistmaker.library.presentation.PlaylistsFragmentViewModel
 import com.practicum.playlistmaker.library.presentation.playlists.PlaylistsState
+import com.practicum.playlistmaker.playlist.ui.PlaylistFragment
 import com.practicum.playlistmaker.playlistCreator.domain.models.Playlist
 import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment.Companion.BUNDLE_KEY
 import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment.Companion.KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistsFragment : Fragment() {
+class PlaylistsFragment : Fragment(), PlaylistAdapter.AdapterListener {
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding get() = _binding!!
     private lateinit var newPlaylistBtn: AppCompatButton
@@ -86,7 +87,7 @@ class PlaylistsFragment : Fragment() {
         playlistRecycler.visibility = View.VISIBLE
         placeholderImage.visibility = View.GONE
         placeholderText.visibility = View.GONE
-        adapter = PlaylistAdapter(playlists, requireContext())
+        adapter = PlaylistAdapter(this, playlists, requireContext())
         playlistRecycler.adapter = adapter
     }
 
@@ -104,6 +105,10 @@ class PlaylistsFragment : Fragment() {
         textView.textAlignment = View.TEXT_ALIGNMENT_CENTER
         snackbar.show()
     }
+    override fun onPlaylistClick(playlist: Playlist) {
+      //  findNavController().navigate(R.id.action_libraryFragment_to_playlistFragment,
+            //    PlaylistFragment.createArgs(playlist.dbId))
+    }
 
     override fun onResume() {
         super.onResume()
@@ -115,4 +120,6 @@ class PlaylistsFragment : Fragment() {
         adapter = null
         playlistRecycler.adapter = null
     }
+
+
 }
