@@ -26,45 +26,41 @@ class SearchViewModel(
 ) : ViewModel() {
     private var historyList = ArrayList<Track>()
     private var searchScreen = SearchState(SEARCH_RESULTS, historyList)
-    private val screenState = MutableLiveData<SearchState>()
+    private val _screenState = MutableLiveData<SearchState>()
 
     init {
         loadHistory()
     }
 
     fun returnScreenState(): LiveData<SearchState> {
-        return screenState
+        return _screenState
     }
 
-    fun setState(state: Int) {
-        //  viewModelScope.launch {
-        //   getHistoryUseCase.execute().collect() {
+    private fun setState(state: Int) {
         when (state) {
             SEARCH_RESULTS -> {
-                screenState.postValue(searchScreen)
+                _screenState.postValue(searchScreen)
             }
 
             LOADING_STATE -> {
-                screenState.postValue(SearchState(LOADING_STATE, historyList))
+                _screenState.postValue(SearchState(LOADING_STATE, historyList))
             }
 
             NOTHING_FOUND -> {
-                screenState.postValue(SearchState(NOTHING_FOUND, historyList))
+                _screenState.postValue(SearchState(NOTHING_FOUND, historyList))
             }
 
             NO_CONNECTION -> {
-                screenState.postValue(SearchState(NO_CONNECTION, historyList))
+                _screenState.postValue(SearchState(NO_CONNECTION, historyList))
             }
 
             HISTORY_STATE -> {
                 historyList = getHistoryUseCase.execute()
-                screenState.postValue(SearchState(HISTORY_STATE, historyList))
+                _screenState.postValue(SearchState(HISTORY_STATE, historyList))
             }
         }
         returnScreenState()
     }
-    // }
-    // }
 
     fun clearSearchList() {
         searchScreen.searchList.clear()

@@ -1,12 +1,12 @@
 package com.practicum.playlistmaker.playlistCreator.ui
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,36 +23,40 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class NewPlaylistFragment : Fragment() {
 
     companion object {
-        fun newInstance() = NewPlaylistFragment()
         const val KEY = "KEY"
         const val BUNDLE_KEY = "BUNDLE_KEY"
+        const val EDIT_KEY = "EDIT_KEY"
+        fun createArgs(editedPlaylistId: Int): Bundle =
+            bundleOf(EDIT_KEY to editedPlaylistId)
     }
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                vm.onArtworkClick(uri, playlistArtwork)
+                vm.onArtworkClick(uri, playlistArtwork, fakeArtwork)
                 isArtworkPicked = true
+                url = uri
             } else {
                 Log.d("PhotoPicker", "Ничего не выбрано")
             }
         }
 
     private lateinit var binding: FragmentNewPlaylistBinding
-    private lateinit var goBackBtn: ImageButton
     private lateinit var playlistArtwork: ImageView
+    private lateinit var fakeArtwork: ImageView
     private lateinit var playlistName: TextInputEditText
     private lateinit var playlistDesc: TextInputEditText
     private lateinit var createBtn: AppCompatButton
     private lateinit var exitDialog: MaterialAlertDialogBuilder
     private var isArtworkPicked = false
+    private var url = Uri.EMPTY
     private val vm by viewModel<NewPlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -60,8 +64,8 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        goBackBtn = binding.goBackBtn
         playlistArtwork = binding.artworkImage
+        fakeArtwork = binding.fakeArtwork
         playlistName = binding.nameEditText
         playlistDesc = binding.descEditText
         createBtn = binding.createBtn
@@ -73,7 +77,7 @@ class NewPlaylistFragment : Fragment() {
                 setResult(null)
             }
 
-        goBackBtn.setOnClickListener {
+        binding.goBackBtn.setOnClickListener {
             if ((playlistDesc.text.toString().isNotEmpty() || playlistName.text.toString()
                     .isNotEmpty()) || isArtworkPicked
             ) {
@@ -92,14 +96,37 @@ class NewPlaylistFragment : Fragment() {
         }
 
         createBtn.setOnClickListener {
-            if (isArtworkPicked){
-                vm.saveArtwork(playlistArtwork)
+            if (isArtworkPicked) {
+                vm.saveArtwork(fakeArtwork)
             }
             vm.onCreateBtnClick(playlistName.text.toString(), playlistDesc.text.toString())
             setResult(playlistName.text.toString())
         }
 
+        if (requireArguments().getInt(EDIT_KEY) != 0) {
+            vm.editScreen(requireArguments().getInt(EDIT_KEY))
+            vm.observeState().observe(viewLifecycleOwner) {
+                binding.headlineText.text = requireContext().getString(R.string.edit)
+                createBtn.text = requireContext().getString(R.string.save)
+                playlistName.setText(it.playlistName)
+                playlistDesc.setText(it.playlistDesc)
+                if (!it.artworkPath.isNullOrEmpty()) {
+                    vm.loadArtwork(playlistArtwork, fakeArtwork, it.artworkPath)
+                }
+                createBtn.setOnClickListener {
+                    if (isArtworkPicked) {
+                        vm.saveArtwork(fakeArtwork)
+                    }
+                    vm.updatePlaylist(playlistName.text.toString(), playlistDesc.text.toString())
+                    setResult(null)
+                }
+                binding.goBackBtn.setOnClickListener {
+                    setResult(null)
+                }
+            }
+        }
     }
+
 
     private fun setResult(trackName: String?) {
         if (trackName == null) {
@@ -117,5 +144,4 @@ class NewPlaylistFragment : Fragment() {
         }
         fragmentManager?.popBackStack()
     }
-
 }

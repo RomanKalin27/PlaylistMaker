@@ -15,15 +15,11 @@ import kotlin.collections.ArrayList
 import com.practicum.playlistmaker.search.domain.models.Track
 
 class TrackAdapter(
-    private val adapterListener: AdapterListener,
+    private val onClick:(track: Track) -> Unit,
+    private val onLongClick:(track: Track) -> Unit,
 ) : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     var trackList = ArrayList<Track>()
     var historyList = ArrayList<Track>()
-
-    interface AdapterListener {
-        fun onClick(track: Track)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(
             R.layout.track_card,
@@ -35,7 +31,11 @@ class TrackAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
-            adapterListener.onClick(trackList[position])
+            onClick.invoke(trackList[position])
+        }
+        holder.itemView.setOnLongClickListener {
+            onLongClick.invoke(trackList[position])
+            true
         }
     }
 
@@ -69,7 +69,6 @@ class TrackAdapter(
                     Locale.getDefault()
                 ).format(item.trackTimeMillis?.toInt())
             }
-            // SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis?.toInt())
             artistName.text = item.artistName
             Glide.with(artwork)
                 .load(item.artworkUrl100)

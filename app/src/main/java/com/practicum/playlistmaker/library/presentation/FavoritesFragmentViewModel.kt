@@ -14,8 +14,8 @@ class FavoritesFragmentViewModel(
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
-    private val stateLiveData = MutableLiveData<FavoritesState>()
-    fun observeState(): LiveData<FavoritesState> = stateLiveData
+    private val _stateLiveData = MutableLiveData<FavoritesState>()
+    fun observeState(): LiveData<FavoritesState> = _stateLiveData
     fun fillData() {
         renderState(FavoritesState.Loading)
         viewModelScope.launch {
@@ -36,6 +36,6 @@ class FavoritesFragmentViewModel(
     }
 
     private fun renderState(state: FavoritesState) {
-        stateLiveData.postValue(state)
+        _stateLiveData.postValue(state)
     }
 }

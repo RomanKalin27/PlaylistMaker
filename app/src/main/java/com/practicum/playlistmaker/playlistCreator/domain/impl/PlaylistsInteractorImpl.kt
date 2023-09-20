@@ -15,7 +15,7 @@ class PlaylistsInteractorImpl(private val playlistsRepository: PlaylistsReposito
     }
 
     override suspend fun getPlaylistById(playlistId: Int): Playlist {
-       return playlistsRepository.getPlaylistById(playlistId)
+        return playlistsRepository.getPlaylistById(playlistId)
     }
 
     override suspend fun addPlaylist(playlist: Playlist) {
@@ -26,16 +26,26 @@ class PlaylistsInteractorImpl(private val playlistsRepository: PlaylistsReposito
         playlistsRepository.deletePlaylist(id)
     }
 
-    override suspend fun addTrackToPlaylist(track: Track) {
-        playlistsRepository.addTrackToPlaylist(track)
-    }
-
     override suspend fun getAddedTracksById(ids: List<Long>): ArrayList<Track> {
         return playlistsRepository.getAddedTracks(ids)
     }
 
-    override suspend fun update(tracklist: ArrayList<Long>, numberOfTracks: Int, playlistId: Int) {
-        playlistsRepository.update(tracklist, numberOfTracks, playlistId)
+    override suspend fun update(playlist: Playlist) {
+        playlistsRepository.update(playlist)
+    }
+
+    override suspend fun addTrack(
+        playlist: Playlist,
+        track: Track
+    ) {
+        playlistsRepository.addTrack(playlist, track)
+    }
+
+    override suspend fun deleteTrack(
+        playlist: Playlist,
+        trackId: Long
+    ) {
+        playlistsRepository.deleteTrack(playlist, trackId)
     }
 
     override fun saveArtwork(image: View): String {

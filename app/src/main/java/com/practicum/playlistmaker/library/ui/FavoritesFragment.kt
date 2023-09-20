@@ -20,16 +20,16 @@ import com.practicum.playlistmaker.search.ui.SearchFragment
 import com.practicum.playlistmaker.search.ui.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FavoritesFragment : Fragment(), TrackAdapter.AdapterListener {
+class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModel<FavoritesFragmentViewModel>()
     private var adapter: TrackAdapter? = null
 
-    private lateinit var placeholderImage: ImageView
-    private lateinit var placeholderText: TextView
-    private lateinit var favoritesList: RecyclerView
-    private lateinit var progressBar: ProgressBar
+    private var placeholderImage: ImageView? = null
+    private var placeholderText: TextView? = null
+    private var favoritesList: RecyclerView? = null
+    private var progressBar: ProgressBar? = null
 
 
     companion object {
@@ -50,16 +50,16 @@ class FavoritesFragment : Fragment(), TrackAdapter.AdapterListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = TrackAdapter(this)
+        val adapter = TrackAdapter(::onClick, ::onClick)
 
-        placeholderImage = binding.placeholderImage
-        placeholderText = binding.placeholderText
-        favoritesList = binding.favoritesList
-        progressBar = binding.progressBar
+         placeholderImage = binding.placeholderImage
+         placeholderText = binding.placeholderText
+         favoritesList = binding.favoritesList
+         progressBar = binding.progressBar
 
-        favoritesList.layoutManager =
+        favoritesList?.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        favoritesList.adapter = adapter
+        favoritesList?.adapter = adapter
 
         vm.fillData()
 
@@ -71,7 +71,7 @@ class FavoritesFragment : Fragment(), TrackAdapter.AdapterListener {
     override fun onDestroyView() {
         super.onDestroyView()
         adapter = null
-        favoritesList.adapter = null
+        favoritesList?.adapter = null
     }
 
     private fun render(state: FavoritesState) {
@@ -83,31 +83,31 @@ class FavoritesFragment : Fragment(), TrackAdapter.AdapterListener {
     }
 
     private fun showLoading() {
-        favoritesList.visibility = View.GONE
-        placeholderImage.visibility = View.GONE
-        placeholderText.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
+        favoritesList?.visibility = View.GONE
+        placeholderImage?.visibility = View.GONE
+        placeholderText?.visibility = View.GONE
+        progressBar?.visibility = View.VISIBLE
     }
 
     private fun showEmpty() {
-        favoritesList.visibility = View.GONE
-        placeholderImage.visibility = View.VISIBLE
-        placeholderText.visibility = View.VISIBLE
-        progressBar.visibility = View.GONE
+        favoritesList?.visibility = View.GONE
+        placeholderImage?.visibility = View.VISIBLE
+        placeholderText?.visibility = View.VISIBLE
+        progressBar?.visibility = View.GONE
     }
 
     private fun showContent(tracks: List<Track>) {
-        favoritesList.visibility = View.VISIBLE
-        placeholderImage.visibility = View.GONE
-        placeholderText.visibility = View.GONE
-        progressBar.visibility = View.GONE
+        favoritesList?.visibility = View.VISIBLE
+        placeholderImage?.visibility = View.GONE
+        placeholderText?.visibility = View.GONE
+        progressBar?.visibility = View.GONE
 
         adapter?.clearAdapter()
         adapter?.trackList?.addAll(tracks)
         adapter?.notifyDataSetChanged()
     }
 
-    override fun onClick(track: Track) {
+    private fun onClick(track: Track) {
         val trackIntent = Intent(requireContext(), PlayerActivity::class.java)
         trackIntent.putExtra(SearchFragment.TRACK, track)
         this.startActivity(trackIntent)

@@ -43,11 +43,61 @@ class PlaylistsRepositoryImpl(
     }
 
     override suspend fun deletePlaylist(id: Int) {
-        appDatabase.playlistDao()
-            .deletePlaylistEntity(appDatabase.playlistDao().getPlaylistById(id))
+        val playlistEnt = appDatabase.playlistDao().getPlaylistById(id)
+        val trackList = playlistDbConvertor.map(playlistEnt).trackList
+        appDatabase.playlistDao().deletePlaylistEntity(playlistEnt)
+        trackList.forEach {
+            deleteAddedTrack(it)
+        }
     }
 
-    override suspend fun addTrackToPlaylist(track: Track) {
+    override suspend fun update(playlist: Playlist) {
+        appDatabase.playlistDao().update(
+            playlist.dbId, gson.toJson(playlist.trackList), playlist.numberOfTracks,
+            playlist.playlistName, playlist.playlistDesc, playlist.artworkUri
+        )
+    }
+
+    override fun saveArtwork(image: View): String {
+        val imageFromView = getBitmapFromView(image)
+        var imageFile = context.getDir(context.getString(R.string.images), Context.MODE_PRIVATE)
+        imageFile = File(imageFile, "${UUID.randomUUID()}.jpg")
+        val stream: OutputStream = FileOutputStream(imageFile)
+        imageFromView.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        stream.flush()
+        stream.close()
+        return imageFile.path
+    }
+
+    override suspend fun getAddedTracks(ids: List<Long>): ArrayList<Track> {
+        val trackList = ArrayList<Track>()
+        ids.forEach {
+            trackList.add(
+                trackDbConvertor.mapAdded(
+                    appDatabase.addedTrackDao().getAddedTrackById(it)
+                )
+            )
+        }
+        return trackList
+    }
+
+    override suspend fun addTrack(
+        playlist: Playlist,
+        track: Track
+    ) {
+        update(playlist)
+        addAddedTrack(track)
+    }
+
+    override suspend fun deleteTrack(
+        playlist: Playlist,
+        trackId: Long,
+    ) {
+        update(playlist)
+        deleteAddedTrack(trackId)
+    }
+
+    private suspend fun addAddedTrack(track: Track) {
         val addedTrackEntity = AddedTrackEntity(
             dbId = track.trackId,
             trackId = track.trackId, trackName = track.trackName,
@@ -64,35 +114,31 @@ class PlaylistsRepositoryImpl(
         appDatabase.addedTrackDao().insertAddedTrack(addedTrackEntity)
     }
 
-    override suspend fun getAddedTracks(ids: List<Long>): ArrayList<Track> {
-        val trackList = ArrayList<Track>()
-        ids.forEach { trackList.add(trackDbConvertor.map_added(appDatabase.addedTrackDao().getAddedTrackById(it))) }
-        return trackList
-    }
-
-    override suspend fun update(tracklist: ArrayList<Long>, numberOfTracks: Int, playlistId: Int) {
-        appDatabase.playlistDao().update(gson.toJson(tracklist), numberOfTracks, playlistId)
-    }
-
-    override fun saveArtwork(image: View): String {
-        val imageFromView = getBitmapFromView(image)
-        var imageFile = context.getDir(context.getString(R.string.images), Context.MODE_PRIVATE)
-        imageFile = File(imageFile, "${UUID.randomUUID()}.jpg")
-        val stream: OutputStream = FileOutputStream(imageFile)
-        imageFromView.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        stream.flush()
-        stream.close()
-        return imageFile.path
-    }
-
-        fun getBitmapFromView(view: View): Bitmap {
-            return Bitmap.createBitmap(view.width, view.height,Bitmap.Config.ARGB_8888).apply {
-                Canvas(this).apply {
-                    view.draw(this)
+    private suspend fun deleteAddedTrack(trackId: Long) {
+        var addedTo = 0
+        getPlaylists().collect { list ->
+            list.listIterator()
+            list.forEach {
+                it.trackList.forEach { id ->
+                    if (trackId == id) {
+                        addedTo += 1
+                    }
                 }
             }
         }
+        if (addedTo == 0) {
+            appDatabase.addedTrackDao()
+                .deleteAddedTrackEntity(appDatabase.addedTrackDao().getAddedTrackById(trackId))
+        }
+    }
 
+    private fun getBitmapFromView(view: View): Bitmap {
+        return Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888).apply {
+            Canvas(this).apply {
+                view.draw(this)
+            }
+        }
+    }
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }

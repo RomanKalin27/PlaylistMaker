@@ -47,4 +47,20 @@
     <string name="tracks_">трек</string>
     <string name="images">Images</string>
     <string name="minutes">минут</string>
+    <string name="deleteTrack">Хотите удалить трек?</string>
+    <string name="deletePlaylist">Хотите удалить плейлист </string>
+    <string name="yes">ДА</string>
+    <string name="no">НЕТ</string>
+    <string name="share">Поделиться</string>
+    <string name="editInfo">Редактировать информацию</string>
+    <string name="toDeletePlaylist">Удалить плейлист</string>
+    <string name="edit">Редактировать</string>
+    <string name="save">Сохранить</string>
+    <string name="noTracksYet">В этом плейлисте ещё нет треков</string>
+    <string name="noTracksForShare">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <plurals name="tracks">
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
 </resources>

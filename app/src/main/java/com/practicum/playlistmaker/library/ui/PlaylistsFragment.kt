@@ -18,17 +18,17 @@ import com.practicum.playlistmaker.library.presentation.PlaylistsFragmentViewMod
 import com.practicum.playlistmaker.library.presentation.playlists.PlaylistsState
 import com.practicum.playlistmaker.playlist.ui.PlaylistFragment
 import com.practicum.playlistmaker.playlistCreator.domain.models.Playlist
+import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment
 import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment.Companion.BUNDLE_KEY
 import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment.Companion.KEY
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistsFragment : Fragment(), PlaylistAdapter.AdapterListener {
+class PlaylistsFragment : Fragment() {
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var newPlaylistBtn: AppCompatButton
-    private lateinit var playlistRecycler: RecyclerView
-    private lateinit var placeholderImage: ImageView
-    private lateinit var placeholderText: TextView
+    private var playlistRecycler: RecyclerView? = null
+    private var placeholderImage: ImageView? = null
+    private var placeholderText: TextView? = null
     private var adapter: PlaylistAdapter? = null
 
     private val vm by viewModel<PlaylistsFragmentViewModel>()
@@ -58,11 +58,11 @@ class PlaylistsFragment : Fragment(), PlaylistAdapter.AdapterListener {
         super.onViewCreated(view, savedInstanceState)
         placeholderImage = binding.placeholderImage
         placeholderText = binding.placeholderText
-        newPlaylistBtn = binding.newPlaylistBtn
         playlistRecycler = binding.playlistRecycler
-        playlistRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
-        newPlaylistBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_libraryFragment_to_newPlaylistFragment)
+        playlistRecycler?.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.newPlaylistBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_libraryFragment_to_newPlaylistFragment,
+            NewPlaylistFragment.createArgs(0))
         }
         vm.fillData()
         vm.observeState().observe(viewLifecycleOwner) {
@@ -78,17 +78,17 @@ class PlaylistsFragment : Fragment(), PlaylistAdapter.AdapterListener {
     }
 
     private fun showEmpty() {
-        playlistRecycler.visibility = View.GONE
-        placeholderImage.visibility = View.VISIBLE
-        placeholderText.visibility = View.VISIBLE
+        playlistRecycler?.visibility = View.GONE
+        placeholderImage?.visibility = View.VISIBLE
+        placeholderText?.visibility = View.VISIBLE
     }
 
     private fun showContent(playlists: List<Playlist>) {
-        playlistRecycler.visibility = View.VISIBLE
-        placeholderImage.visibility = View.GONE
-        placeholderText.visibility = View.GONE
-        adapter = PlaylistAdapter(this, playlists, requireContext())
-        playlistRecycler.adapter = adapter
+        playlistRecycler?.visibility = View.VISIBLE
+        placeholderImage?.visibility = View.GONE
+        placeholderText?.visibility = View.GONE
+        adapter = PlaylistAdapter(::onPlaylistClick, playlists, requireContext())
+        playlistRecycler?.adapter = adapter
     }
 
     private fun showSnackbar(message: String) {
@@ -105,9 +105,9 @@ class PlaylistsFragment : Fragment(), PlaylistAdapter.AdapterListener {
         textView.textAlignment = View.TEXT_ALIGNMENT_CENTER
         snackbar.show()
     }
-    override fun onPlaylistClick(playlist: Playlist) {
-      //  findNavController().navigate(R.id.action_libraryFragment_to_playlistFragment,
-            //    PlaylistFragment.createArgs(playlist.dbId))
+     private fun onPlaylistClick(playlist: Playlist) {
+        findNavController().navigate(R.id.action_libraryFragment_to_playlistFragment,
+            PlaylistFragment.createArgs(playlist.dbId))
     }
 
     override fun onResume() {
@@ -118,7 +118,7 @@ class PlaylistsFragment : Fragment(), PlaylistAdapter.AdapterListener {
     override fun onDestroyView() {
         super.onDestroyView()
         adapter = null
-        playlistRecycler.adapter = null
+        playlistRecycler?.adapter = null
     }
 
 

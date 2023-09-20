@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import com.practicum.playlistmaker.databinding.FragmentSettingBinding
@@ -23,7 +22,7 @@ class SettingFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSettingBinding.inflate(inflater, container, false)
         return binding.root
     }
