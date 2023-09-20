@@ -3,12 +3,19 @@
     style="@style/BackgroundStyle">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/refresh_btn"
+        android:id="@+id/new_playlist_btn"
         style="@style/roundBtn"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         android:minWidth="132dp"
         android:text="@string/newPlaylist" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/margin12" />
 
     <ImageView
         android:id="@+id/placeholderImage"
@@ -19,7 +26,7 @@
         android:src="@drawable/ic_nothing_found" />
 
     <TextView
-        android:id="@+id/noPlaylists"
+        android:id="@+id/placeholderText"
         style="@style/placeholderText"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/margin16"

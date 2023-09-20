@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playerLayout"
+    style="@style/BackgroundStyle">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageButton
+        android:id="@+id/goBackBtn"
+        style="@style/goBackBtnStyle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/artwork"
+        android:layout_width="@dimen/zero"
+        android:layout_height="@dimen/zero"
+        android:layout_marginTop="60dp"
+        android:layout_marginHorizontal="@dimen/margin16"
+        app:layout_constraintDimensionRatio="H, 1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/playlistName"
+        style="@style/headlineText"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginTop="@dimen/margin16"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@+id/artwork"
+        app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/creationYear"
+        style="@style/headlineText"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginTop="@dimen/margin4"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@+id/playlistName"
+        app:layout_constraintStart_toStartOf="parent" />
+    <TextView
+        android:id="@+id/playlistLength"
+        style="@style/headlineText"
+        android:layout_marginStart="@dimen/margin16"
+        android:layout_marginTop="@dimen/margin4"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@+id/creationYear"
+        app:layout_constraintStart_toStartOf="parent" />
+    <ImageView
+        android:id="@+id/dot"
+        android:layout_width="@dimen/dot_side"
+        android:layout_height="@dimen/dot_side"
+        android:layout_marginStart="@dimen/dot_margin"
+        android:layout_marginTop="@dimen/dot_margin"
+        android:src="@drawable/ic_dot"
+        app:layout_constraintTop_toBottomOf="@+id/creationYear"
+        app:layout_constraintStart_toEndOf="@+id/playlistLength" />
+    <TextView
+        android:id="@+id/numberOfTracks"
+        style="@style/headlineText"
+        android:layout_marginStart="@dimen/margin4"
+        android:layout_marginTop="@dimen/margin4"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintTop_toBottomOf="@+id/creationYear"
+        app:layout_constraintStart_toEndOf="@+id/dot" />
+    <ImageButton
+        android:id="@+id/shareBtn"
+        style="@style/goBackBtnStyle"
+        android:src="@drawable/ic_share"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playlistLength" />
+    <ImageButton
+        android:id="@+id/optionsBtn"
+        style="@style/goBackBtnStyle"
+        android:src="@drawable/more_btn"
+        app:layout_constraintStart_toEndOf="@+id/shareBtn"
+        app:layout_constraintTop_toBottomOf="@+id/playlistLength" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+<LinearLayout
+android:id="@+id/bottom_sheet"
+android:layout_width="match_parent"
+android:layout_height="250dp"
+android:background="@drawable/bottom_sheet_bg"
+android:backgroundTint="@color/white_black"
+android:gravity="top|center"
+android:orientation="vertical"
+app:behavior_hideable="true"
+app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+<ImageView
+    android:layout_width="50dp"
+    android:layout_height="@dimen/margin4"
+    android:layout_marginTop="8dp"
+    android:background="@color/gray_white" />
+    
+
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/bottom_sheet_recycler"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/margin16" />
+
+</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

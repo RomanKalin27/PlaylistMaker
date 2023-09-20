@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="subtext">11sp</dimen>
+    <dimen name="text12">12sp</dimen>
     <dimen name="playerText">13sp</dimen>
     <dimen name="roundBtn_text">14sp</dimen>
     <dimen name="text">16sp</dimen>
     <dimen name="placeholderText">19sp</dimen>
     <dimen name="headline_text">22sp</dimen>
     <dimen name="zero">0dp</dimen>
+    <dimen name="margin4">4dp</dimen>
+    <dimen name="margin8">8dp</dimen>
     <dimen name="margin12">12dp</dimen>
     <dimen name="margin14">14dp</dimen>
     <dimen name="margin16">16dp</dimen>
     <dimen name="margin20">20dp</dimen>
     <dimen name="margin24">24dp</dimen>
     <dimen name="margin30">30dp</dimen>
+    <dimen name="margin32">32dp</dimen>
     <dimen name="margin64">64dp</dimen>
     <dimen name="setting_menu_button">61dp</dimen>
     <dimen name="top_indention">40dp</dimen>

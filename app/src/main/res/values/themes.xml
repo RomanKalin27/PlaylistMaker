@@ -25,7 +25,7 @@
         <item name="android:fontFamily">@font/yandexsansdisplay_regular</item>
         <item name="android:hint">@string/search</item>
         <item name="backgroundTint">@color/light_gray</item>
-        <item name="android:background">@drawable/corners8</item>
+        <item name="android:background">@drawable/blue_corners8</item>
         <item name="android:drawablePadding">9dp</item>
         <item name="android:drawableStart">@drawable/ic_search_day</item>
         <item name="android:textCursorDrawable">@drawable/text_cursor</item>

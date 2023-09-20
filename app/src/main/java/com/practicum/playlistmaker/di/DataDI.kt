@@ -10,6 +10,9 @@ import com.practicum.playlistmaker.library.data.TrackDbConvertor
 import com.practicum.playlistmaker.library.data.db.AppDatabase
 import com.practicum.playlistmaker.library.data.repository.FavoritesRepositoryImpl
 import com.practicum.playlistmaker.library.domain.db.FavoritesRepository
+import com.practicum.playlistmaker.playlistCreator.data.db.PlaylistDbConvertor
+import com.practicum.playlistmaker.playlistCreator.data.repository.PlaylistsRepositoryImpl
+import com.practicum.playlistmaker.playlistCreator.domain.db.PlaylistsRepository
 import com.practicum.playlistmaker.search.data.network.NetworkClient
 import com.practicum.playlistmaker.search.data.network.TrackSearcher
 import com.practicum.playlistmaker.search.data.repository.TrackRepositoryImpl
@@ -37,7 +40,7 @@ val dataModule = module {
         ThemeRepositoryImpl(sharedPrefs = get())
     }
     single<SearchRepository> {
-        SearchRepositoryImpl(networkClient = get(),)
+        SearchRepositoryImpl(networkClient = get())
     }
     single<NetworkClient> {
         TrackSearcher(androidContext(), itunesService = get())
@@ -60,4 +63,14 @@ val dataModule = module {
         FavoritesRepositoryImpl(appDatabase = get(), trackDbConvertor = get())
     }
     factory { TrackDbConvertor() }
+    single<PlaylistsRepository> {
+        PlaylistsRepositoryImpl(
+            appDatabase = get(),
+            playlistDbConvertor = get(),
+            gson = get(),
+            trackDbConvertor = get(),
+            context = androidContext(),
+        )
+    }
+    factory { PlaylistDbConvertor(Gson()) }
 }

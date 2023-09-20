@@ -4,6 +4,8 @@ import android.media.MediaPlayer
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.library.domain.db.FavoritesInteractor
 import com.practicum.playlistmaker.library.domain.impl.FavoritesInteractorImpl
+import com.practicum.playlistmaker.playlistCreator.domain.db.PlaylistsInteractor
+import com.practicum.playlistmaker.playlistCreator.domain.impl.PlaylistsInteractorImpl
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
@@ -53,7 +55,7 @@ val domainModule = module {
         SaveTrackUseCase(trackRepository = get(), gson = get())
     }
     factory {
-        GetHistoryUseCase(trackRepository = get(),)
+        GetHistoryUseCase(trackRepository = get())
     }
     factory {
         RemoveTracksUseCase(trackRepository = get())
@@ -63,5 +65,8 @@ val domainModule = module {
     }
     single<FavoritesInteractor> {
         FavoritesInteractorImpl(favoritesRepository = get())
+    }
+    single<PlaylistsInteractor> {
+        PlaylistsInteractorImpl(playlistsRepository = get())
     }
 }
