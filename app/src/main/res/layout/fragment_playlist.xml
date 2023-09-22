@@ -68,6 +68,7 @@
         <ImageButton
             android:id="@+id/shareBtn"
             style="@style/goBackBtnStyle"
+            android:layout_height="18dp"
             android:layout_marginStart="@dimen/margin16"
             android:layout_marginTop="@dimen/margin16"
             android:src="@drawable/ic_share"
@@ -103,7 +104,6 @@
         android:gravity="top|center"
         android:orientation="vertical"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="266dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <ImageView

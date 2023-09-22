@@ -78,7 +78,10 @@ class PlaylistFragment: Fragment() {
         val playlistId = requireArguments().getInt(PLAYLIST_ID)
         vm.loadPlaylist(playlistId)
 
+        val density = requireContext().resources.displayMetrics.density
+        val screenHeight = requireContext().resources.displayMetrics.heightPixels
 
+        val screenWidth = requireContext().resources.displayMetrics.widthPixels
         noTracksMessage = binding.noTracksMessage
         numberOfTracksSheet = binding.numberOfTracksSheet
         playlistArtworkSheet = binding.playlistArtworkSheet
@@ -124,7 +127,6 @@ class PlaylistFragment: Fragment() {
         bsRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         bsRecycler.adapter = adapter
-
 
 
         goBackBtn.setOnClickListener {
@@ -184,10 +186,17 @@ class PlaylistFragment: Fragment() {
             }
             adapter.notifyDataSetChanged()
 
+            var capHeight = 180 * density
+            if(playlistDesc.text.isEmpty()){
+                capHeight = 151 * density
+            }
+            bottomSheetBehavior.peekHeight = screenHeight.minus(screenWidth.plus(capHeight.toInt()))
+
             if(it.navigateUp){
                 findNavController().navigateUp()
             }
         }
+
 
     }
 
@@ -232,6 +241,5 @@ class PlaylistFragment: Fragment() {
             }
         playlistDialog.show()
     }
-
 
 }
