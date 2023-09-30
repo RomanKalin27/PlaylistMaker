@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/BackgroundStyle">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/new_playlist_btn"
+        style="@style/roundBtn"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:minWidth="132dp"
+        android:text="@string/newPlaylist" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="@dimen/margin12" />
+
+    <ImageView
+        android:id="@+id/placeholderImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="46dp"
+        android:src="@drawable/ic_nothing_found" />
+
+    <TextView
+        android:id="@+id/placeholderText"
+        style="@style/placeholderText"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin16"
+        android:text="@string/playlistsPlaceholder"
+        android:textAlignment="center" />
+</LinearLayout>

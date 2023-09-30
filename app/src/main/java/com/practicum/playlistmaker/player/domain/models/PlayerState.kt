@@ -1,10 +1,22 @@
 package com.practicum.playlistmaker.player.domain.models
 
-import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.search.domain.models.Track
+import com.practicum.playlistmaker.playlistCreator.domain.models.Playlist
 
-class PlayerState {
-    var track = Track(0, "", "", "", "", "", "", "", "", "")
-    var playerState = 0
-    var timePlayed = R.string.time.toString()
+
+sealed class PlayerState(
+    val isPlayButtonEnabled: Boolean,
+    val isPaused: Boolean,
+    val progress: String,
+    val playlists: List<Playlist>,
+) {
+
+    class Default(playlists: List<Playlist>) : PlayerState(false, true, "00:00", playlists)
+
+    class Prepared(playlists: List<Playlist>) : PlayerState(true, true, "00:00", playlists)
+
+    class Playing(progress: String, playlists: List<Playlist>) :
+        PlayerState(true, false, progress, playlists)
+
+    class Paused(progress: String, playlists: List<Playlist>) :
+        PlayerState(true, true, progress, playlists)
 }

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/BackgroundStyle"
+    android:gravity="center|top">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/headlineText"
+            android:text="@string/search" />
+
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/margin16">
+
+        <EditText
+            android:id="@+id/searchBar"
+            style="@style/searchBar" />
+
+        <ImageButton
+            android:id="@+id/deleteBtn"
+            style="@style/deleteBtn" />
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        tools:listitem="@layout/track_card" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="148dp"
+        android:indeterminateTint="@color/dark_blue"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/placeholder"
+        style="@style/BackgroundStyle"
+        android:layout_marginTop="112dp"
+        android:gravity="center|top"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/placeholderImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:id="@+id/placeholderText"
+            style="@style/placeholderText"
+            android:paddingTop="40dp" />
+
+        <TextView
+            android:id="@+id/placeholderExtraText"
+            style="@style/placeholderText"
+            android:layout_width="300dp"
+            android:gravity="center"
+            android:paddingTop="20dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/refresh_btn"
+            style="@style/roundBtn"
+            android:layout_width="90dp"
+            android:text="@string/refresh" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_history"
+        style="@style/BackgroundStyle">
+
+        <TextView
+            android:id="@+id/search_history_text"
+            style="@style/placeholderText"
+            android:paddingTop="50dp"
+            android:text="@string/search_history"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/history_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintHeight_max="450dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_history_text"
+            tools:listitem="@layout/track_card" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/clear_history"
+            style="@style/roundBtn"
+            android:layout_width="148dp"
+            android:text="@string/clear_history"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/history_recycler" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

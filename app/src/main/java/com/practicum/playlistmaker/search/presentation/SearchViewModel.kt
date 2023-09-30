@@ -1,13 +1,12 @@
 package com.practicum.playlistmaker.search.presentation
 
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.practicum.playlistmaker.search.data.TrackResponse
-import com.practicum.playlistmaker.search.ui.TrackAdapter
-import com.practicum.playlistmaker.search.domain.api.TrackApi
+import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.models.SearchState
-import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.BLANK_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.HISTORY_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.LOADING_STATE
 import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.NOTHING_FOUND
@@ -16,112 +15,89 @@ import com.practicum.playlistmaker.search.domain.models.SearchState.Companion.SE
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
 import com.practicum.playlistmaker.search.domain.usecases.RemoveTracksUseCase
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val getHistoryUseCase: GetHistoryUseCase,
+    private val saveTrackUseCase: SaveTrackUseCase,
     private val removeTracksUseCase: RemoveTracksUseCase,
+    private val searchInteractor: SearchInteractor,
 ) : ViewModel() {
-    private val trackAdapter = TrackAdapter()
-    private val searchList = ArrayList<Track>()
-    private var searchInput = String()
-    private val baseUrl = "https://itunes.apple.com/"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val itunesService = retrofit.create(TrackApi::class.java)
-    private val screenState = MutableLiveData<SearchState>()
+    private var historyList = ArrayList<Track>()
+    private var searchScreen = SearchState(SEARCH_RESULTS, historyList)
+    private val _screenState = MutableLiveData<SearchState>()
 
     init {
-        trackAdapter.historyList = getHistoryUseCase.execute()
+        loadHistory()
     }
 
     fun returnScreenState(): LiveData<SearchState> {
-        return screenState
+        return _screenState
     }
 
-    fun setState(state: Int) {
+    private fun setState(state: Int) {
         when (state) {
             SEARCH_RESULTS -> {
-                screenState.value = SearchState(SEARCH_RESULTS, trackAdapter)
+                _screenState.postValue(searchScreen)
             }
 
             LOADING_STATE -> {
-                screenState.value = SearchState(LOADING_STATE, trackAdapter)
+                _screenState.postValue(SearchState(LOADING_STATE, historyList))
             }
 
             NOTHING_FOUND -> {
-                screenState.value = SearchState(NOTHING_FOUND, trackAdapter)
+                _screenState.postValue(SearchState(NOTHING_FOUND, historyList))
             }
 
             NO_CONNECTION -> {
-                screenState.value = SearchState(NO_CONNECTION, trackAdapter)
+                _screenState.postValue(SearchState(NO_CONNECTION, historyList))
             }
 
             HISTORY_STATE -> {
-                if (trackAdapter.historyList.isEmpty()) {
-                    screenState.value = SearchState(BLANK_STATE, trackAdapter)
-                } else {
-                    screenState.value = SearchState(HISTORY_STATE, trackAdapter)
-                }
+                historyList = getHistoryUseCase.execute()
+                _screenState.postValue(SearchState(HISTORY_STATE, historyList))
             }
         }
         returnScreenState()
     }
 
-    fun saveInput(input: String) {
-        searchInput = input
-        screenState.value?.searchInput = input
-    }
-
     fun clearSearchList() {
-        searchList.clear()
+        searchScreen.searchList.clear()
     }
 
     fun clearHistoryList() {
-        trackAdapter.historyList.clear()
         removeTracksUseCase.execute()
         setState(HISTORY_STATE)
     }
 
     fun loadHistory() {
-        trackAdapter.isHistory = true
-        trackAdapter.trackList = trackAdapter.historyList
         setState(HISTORY_STATE)
     }
 
-    fun getTrack() {
-        trackAdapter.trackList = searchList
-        trackAdapter.isHistory = false
-        if (searchInput.isNotEmpty()) {
-            setState(LOADING_STATE)
-            itunesService.search(searchInput).enqueue(object : Callback<TrackResponse?> {
-                override fun onResponse(
-                    call: Call<TrackResponse?>,
-                    response: Response<TrackResponse?>
-                ) {
-                    clearSearchList()
-                    setState(SEARCH_RESULTS)
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        searchList.addAll(response.body()?.results!!)
-                        trackAdapter.notifyDataSetChanged()
-                    } else {
-                        setState(NOTHING_FOUND)
-                        trackAdapter.notifyDataSetChanged()
-                    }
-                }
-
-                override fun onFailure(call: Call<TrackResponse?>, t: Throwable) {
-                    setState(NO_CONNECTION)
-                }
-            })
-        }
+    fun saveTrack(track: Track, historyList: ArrayList<Track>) {
+        saveTrackUseCase.execute(track, historyList)
     }
 
-
+    fun getTrack(input: String) {
+        setState(LOADING_STATE)
+        viewModelScope.launch {
+            searchInteractor
+                .searchTracks(input)
+                .collect {
+                    clearSearchList()
+                    if (it.isNotEmpty()) {
+                        searchScreen.searchList.addAll(it)
+                        setState(SEARCH_RESULTS)
+                    } else {
+                        if (searchInteractor.isOnline()) {
+                            setState(NOTHING_FOUND)
+                        } else {
+                            setState(NO_CONNECTION)
+                        }
+                    }
+                }
+        }
+    }
 }
+

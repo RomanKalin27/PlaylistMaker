@@ -1,7 +1,5 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.app.Application
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,22 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.app.App
-import com.practicum.playlistmaker.search.data.TrackRepositoryImpl
-import com.practicum.playlistmaker.search.domain.usecases.SaveTrackUseCase
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import com.practicum.playlistmaker.search.domain.models.Track
-import com.practicum.playlistmaker.search.domain.usecases.GetHistoryUseCase
-import com.practicum.playlistmaker.player.ui.PlayerActivity
-import com.practicum.playlistmaker.search.domain.DiffUtil
 
-class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
+class TrackAdapter(
+    private val onClick:(track: Track) -> Unit,
+    private val onLongClick:(track: Track) -> Unit,
+) : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     var trackList = ArrayList<Track>()
     var historyList = ArrayList<Track>()
-    var isHistory = true
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(
             R.layout.track_card,
@@ -38,34 +31,28 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
-            val trackRepository = TrackRepositoryImpl(
-                sharedPrefs = it.context.getSharedPreferences(
-                    App.SHARED_PREFS, Application.MODE_PRIVATE
-                )
-            )
-            val saveTrackUseCase = SaveTrackUseCase(trackRepository = trackRepository)
-            val getHistoryUseCase = GetHistoryUseCase(trackRepository = trackRepository)
-            saveTrackUseCase.execute(trackList[position])
-            if (!isHistory) {
-                this.notifyDataSetChanged()
-            }
-            setData(getHistoryUseCase.execute())
-            val trackIntent = Intent(it.context, PlayerActivity::class.java)
-            it.context.startActivity(trackIntent)
+            onClick.invoke(trackList[position])
+        }
+        holder.itemView.setOnLongClickListener {
+            onLongClick.invoke(trackList[position])
+            true
         }
     }
 
     override fun getItemCount() = trackList.size
 
-
-    fun setData(newTrackList: ArrayList<Track>): ArrayList<Track> {
+    fun clearAdapter() {
+        historyList.clear()
+        trackList.clear()
+        this.notifyDataSetChanged()
+    }
+    /*fun setData(newTrackList: ArrayList<Track>): ArrayList<Track> {
         val diffUtil = DiffUtil(historyList, newTrackList)
         val diffResults = androidx.recyclerview.widget.DiffUtil.calculateDiff(diffUtil)
         historyList = newTrackList
         diffResults.dispatchUpdatesTo(this)
         return historyList
-    }
-
+    }*/
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val artwork: ImageView = itemView.findViewById(R.id.card_icon)
@@ -74,8 +61,14 @@ class TrackAdapter() : RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
         private val artistName: TextView = itemView.findViewById(R.id.card_artist_name)
         fun bind(item: Track) {
             trackName.text = item.trackName
-            trackTime.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(item.trackTimeMillis.toInt())
+            if (item.trackTimeMillis?.contains(":") == true) {
+                trackTime.text = item.trackTimeMillis
+            } else {
+                trackTime.text = SimpleDateFormat(
+                    "mm:ss",
+                    Locale.getDefault()
+                ).format(item.trackTimeMillis?.toInt())
+            }
             artistName.text = item.artistName
             Glide.with(artwork)
                 .load(item.artworkUrl100)

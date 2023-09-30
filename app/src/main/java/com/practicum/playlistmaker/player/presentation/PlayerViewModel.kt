@@ -1,92 +1,173 @@
 package com.practicum.playlistmaker.player.presentation
 
-import android.os.Handler
-import android.os.Looper
+import android.media.MediaPlayer
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
+import com.practicum.playlistmaker.library.data.db.AppDatabase
+import com.practicum.playlistmaker.library.domain.db.FavoritesInteractor
 import com.practicum.playlistmaker.player.domain.models.PlayerState
-import com.practicum.playlistmaker.search.domain.api.TrackRepository
+import com.practicum.playlistmaker.playlistCreator.domain.db.PlaylistsInteractor
+import com.practicum.playlistmaker.playlistCreator.domain.models.Playlist
 import com.practicum.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlayerViewModel(
-    private val playerInteractor: PlayerInteractor,
-    private val trackRepository: TrackRepository,
+    private val favoritesInteractor: FavoritesInteractor,
+    private val appDatabase: AppDatabase,
+    private val playlistsInteractor: PlaylistsInteractor,
 ) : ViewModel() {
-    private val handler = Handler(Looper.getMainLooper())
-    private val setTimeRunnable = Runnable { getPlayerState() }
-    private val screenState = MutableLiveData<PlayerState>()
-    private val screen = PlayerState()
+    private var timerJob: Job? = null
+    private var playlists = listOf<Playlist>()
+    private var mediaPlayer: MediaPlayer = MediaPlayer()
+    private val _playerState = MutableLiveData<PlayerState>(PlayerState.Default(playlists))
+    private var loadedTrack = Track(0, "", "", "", "", "", "", "", "", "", false)
+    fun observePlayerState(): LiveData<PlayerState> = _playerState
 
-    init {
-     loadTrack()
-      setTimeRunnable.run()
-   }
-
-    fun returnScreenState(): LiveData<PlayerState> {
-        screenState.value = screen
-        return screenState
+    override fun onCleared() {
+        super.onCleared()
+        releasePlayer()
     }
 
-    private fun loadTrack() {
-        screen.track = Track(
-            0, trackRepository.getTrackName()!!,
-            trackRepository.getArtistName()!!,
-            trackRepository.getTrackTime()!!,
-            trackRepository.getArtwork()!!,
-            trackRepository.getCollectionName()!!,
-            trackRepository.getReleaseDate()!!,
-            trackRepository.getPrimaryGenreName()!!,
-            trackRepository.getCountry()!!,
-            ""
-        )
-        returnScreenState()
+    fun onPause() {
+        pausePlayer()
     }
 
-   private fun getPlayerState() {
-        screen.playerState = playerInteractor.returnPlayerState()
-        setTime()
-        handler.postDelayed(setTimeRunnable, SET_TIME_DELAY)
-        returnScreenState()
+    fun onPlayButtonClicked() {
+        when (_playerState.value) {
+            is PlayerState.Playing -> {
+                pausePlayer()
+            }
+
+            is PlayerState.Prepared, is PlayerState.Paused -> {
+                startPlayer()
+            }
+
+            else -> {}
+        }
     }
 
-    private fun setTime() {
-        screen.timePlayed = playerInteractor.setTime()
-        returnScreenState()
+    private fun initMediaPlayer(url: String?) {
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            _playerState.postValue(PlayerState.Prepared(playlists))
+        }
+        mediaPlayer.setOnCompletionListener {
+            timerJob?.cancel()
+            _playerState.postValue(PlayerState.Prepared(playlists))
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        _playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition(), playlists))
+        startTimer()
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        timerJob?.cancel()
+        _playerState.postValue(PlayerState.Paused(getCurrentPlayerPosition(), playlists))
+    }
+
+    private fun releasePlayer() {
+        mediaPlayer.stop()
+        mediaPlayer.release()
+        _playerState.value = PlayerState.Default(playlists)
+    }
+
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (mediaPlayer.isPlaying) {
+                delay(TIMER_DELAY_MILLIS)
+                _playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition(), playlists))
+            }
+        }
+    }
+
+    private fun getCurrentPlayerPosition(): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+            ?: "00:00"
+    }
+
+    fun loadTrack(track: Track, favoriteBtn: ImageButton) {
+        viewModelScope.launch {
+            loadedTrack = track
+            loadedTrack.isFavorite =
+                appDatabase.trackDao().getTracksIds().contains(loadedTrack.trackId)
+            favoriteBtnChange(favoriteBtn, false)
+        }
+        initMediaPlayer(track.previewUrl)
     }
 
     fun getArtwork(artwork: ImageView) {
         Glide.with(artwork)
             .load(
-                trackRepository.getArtwork()
-                    ?.replaceAfterLast('/', "512x512bb.jpg")
+                loadedTrack.artworkUrl100
+                    .replaceAfterLast('/', "512x512bb.jpg")
             )
             .placeholder(R.drawable.ic_player_placeholder)
-            .transform(RoundedCorners(8))
+            .transform(
+                RoundedCorners(
+                    artwork.resources.getDimensionPixelSize(R.dimen.artwork_corner_r)
+                )
+            )
             .into(artwork)
     }
 
-
-    fun preparePlayer() {
-        playerInteractor.preparePlayer()
+    fun favoriteBtnChange(favoriteBtn: ImageButton, isClicked: Boolean) {
+        viewModelScope.launch {
+            if (loadedTrack.isFavorite) {
+                if (isClicked) {
+                    loadedTrack.isFavorite = false
+                    favoritesInteractor.deleteTrack(loadedTrack.trackId)
+                    favoriteBtn.setImageResource(R.drawable.ic_favorite)
+                } else {
+                    favoriteBtn.setImageResource(R.drawable.ic_favorite_filled)
+                }
+            } else {
+                if (isClicked) {
+                    loadedTrack.isFavorite = true
+                    favoritesInteractor.addTrack(loadedTrack)
+                    favoriteBtn.setImageResource(R.drawable.ic_favorite_filled)
+                } else {
+                    favoriteBtn.setImageResource(R.drawable.ic_favorite)
+                }
+            }
+        }
     }
 
-   fun playbackControl() {
-        playerInteractor.playbackControl()
+    fun onPlaylistClick(playlist: Playlist, track: Track) {
+        viewModelScope.launch {
+            playlist.trackList.add(track.trackId)
+            playlist.numberOfTracks = playlist.trackList.size
+            playlistsInteractor.addTrack(playlist, track)
+        }
     }
 
-    fun onDestroy() {
-        handler.removeCallbacks(setTimeRunnable)
-        playerInteractor.onDestroy()
+    fun fillData(playlists: ArrayList<Playlist>) {
+        viewModelScope.launch {
+            playlistsInteractor
+                .getPlaylists()
+                .collect {
+                    playlists.clear()
+                    playlists.addAll(it)
+                }
+        }
     }
 
     companion object {
-        private const val SET_TIME_DELAY = 400L
-
+        private const val TIMER_DELAY_MILLIS = 300L
     }
 }

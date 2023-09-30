@@ -1,12 +1,12 @@
 package com.practicum.playlistmaker.search.domain.models
 
-import com.practicum.playlistmaker.search.ui.TrackAdapter
 
 class SearchState(
     val state: Int,
-    val trackAdapter: TrackAdapter,
+    val historyList: ArrayList<Track>,
 ) {
-    var searchInput = ""
+    var isClickAllowed = true
+    var searchList = ArrayList<Track>()
 
     companion object {
         const val HISTORY_STATE = 1
@@ -14,6 +14,5 @@ class SearchState(
         const val LOADING_STATE = 3
         const val NOTHING_FOUND = 4
         const val NO_CONNECTION = 5
-        const val BLANK_STATE = 6
     }
 }
