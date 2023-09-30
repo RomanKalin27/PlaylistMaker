@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.playlistCreator.domain.models
 
 
+
 data class Playlist(
     val dbId: Int,
     val playlistName: String,

@@ -86,12 +86,12 @@
             android:layout_marginBottom="@dimen/margin30"
             android:text="@string/time"
             android:textSize="@dimen/roundBtn_text"
-            app:layout_constraintBottom_toTopOf="@+id/lenght"
+            app:layout_constraintBottom_toTopOf="@+id/length"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/lenght"
+            android:id="@+id/length"
             style="@style/playerText"
             android:text="@string/lenght"
             android:textColor="@color/gray"

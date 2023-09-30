@@ -17,10 +17,10 @@ class SettingViewModel(
     private val saveThemeUseCase: SaveThemeUseCase,
     private val getThemeUseCase: GetThemeUseCase,
 ) : ViewModel() {
-    private val resultSwitch = MutableLiveData<Boolean>()
+    private val _resultSwitch = MutableLiveData<Boolean>()
     fun getSwitchResult(): LiveData<Boolean> {
-        resultSwitch.value = getThemeUseCase.execute()
-        return resultSwitch
+        _resultSwitch.value = getThemeUseCase.execute()
+        return _resultSwitch
     }
 
     fun saveTheme(isChecked: Boolean) {

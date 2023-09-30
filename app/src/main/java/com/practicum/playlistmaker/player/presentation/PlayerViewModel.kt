@@ -30,9 +30,9 @@ class PlayerViewModel(
     private var timerJob: Job? = null
     private var playlists = listOf<Playlist>()
     private var mediaPlayer: MediaPlayer = MediaPlayer()
-    private val playerState = MutableLiveData<PlayerState>(PlayerState.Default(playlists))
+    private val _playerState = MutableLiveData<PlayerState>(PlayerState.Default(playlists))
     private var loadedTrack = Track(0, "", "", "", "", "", "", "", "", "", false)
-    fun observePlayerState(): LiveData<PlayerState> = playerState
+    fun observePlayerState(): LiveData<PlayerState> = _playerState
 
     override fun onCleared() {
         super.onCleared()
@@ -44,7 +44,7 @@ class PlayerViewModel(
     }
 
     fun onPlayButtonClicked() {
-        when (playerState.value) {
+        when (_playerState.value) {
             is PlayerState.Playing -> {
                 pausePlayer()
             }
@@ -61,37 +61,37 @@ class PlayerViewModel(
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerState.postValue(PlayerState.Prepared(playlists))
+            _playerState.postValue(PlayerState.Prepared(playlists))
         }
         mediaPlayer.setOnCompletionListener {
             timerJob?.cancel()
-            playerState.postValue(PlayerState.Prepared(playlists))
+            _playerState.postValue(PlayerState.Prepared(playlists))
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition(), playlists))
+        _playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition(), playlists))
         startTimer()
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
         timerJob?.cancel()
-        playerState.postValue(PlayerState.Paused(getCurrentPlayerPosition(), playlists))
+        _playerState.postValue(PlayerState.Paused(getCurrentPlayerPosition(), playlists))
     }
 
     private fun releasePlayer() {
         mediaPlayer.stop()
         mediaPlayer.release()
-        playerState.value = PlayerState.Default(playlists)
+        _playerState.value = PlayerState.Default(playlists)
     }
 
     private fun startTimer() {
         timerJob = viewModelScope.launch {
             while (mediaPlayer.isPlaying) {
-                delay(TIMER_DELAY)
-                playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition(), playlists))
+                delay(TIMER_DELAY_MILLIS)
+                _playerState.postValue(PlayerState.Playing(getCurrentPlayerPosition(), playlists))
             }
         }
     }
@@ -152,8 +152,7 @@ class PlayerViewModel(
         viewModelScope.launch {
             playlist.trackList.add(track.trackId)
             playlist.numberOfTracks = playlist.trackList.size
-            playlistsInteractor.addTrackToPlaylist(track)
-            playlistsInteractor.update(playlist.trackList, playlist.numberOfTracks, playlist.dbId)
+            playlistsInteractor.addTrack(playlist, track)
         }
     }
 
@@ -169,6 +168,6 @@ class PlayerViewModel(
     }
 
     companion object {
-        private const val TIMER_DELAY = 300L
+        private const val TIMER_DELAY_MILLIS = 300L
     }
 }

@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 class PlaylistsFragmentViewModel(
     private val playlistsInteractor: PlaylistsInteractor
 ) : ViewModel() {
-    private val stateLiveData = MutableLiveData<PlaylistsState>()
-    fun observeState(): LiveData<PlaylistsState> = stateLiveData
+    private val _stateLiveData = MutableLiveData<PlaylistsState>()
+    fun observeState(): LiveData<PlaylistsState> = _stateLiveData
     fun fillData() {
         viewModelScope.launch {
             playlistsInteractor
@@ -33,6 +33,6 @@ class PlaylistsFragmentViewModel(
     }
 
     private fun renderState(state: PlaylistsState) {
-        stateLiveData.postValue(state)
+        _stateLiveData.postValue(state)
     }
 }

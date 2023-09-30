@@ -13,7 +13,6 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isGone
@@ -31,21 +30,19 @@ import com.practicum.playlistmaker.search.presentation.SearchViewModel
 import com.practicum.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
+class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
-    private val trackAdapter by lazy { TrackAdapter(this) }
+    private val trackAdapter by lazy { TrackAdapter(::onClick, ::onClick) }
     private lateinit var searchEditText: EditText
     private lateinit var deleteBtn: ImageButton
     private lateinit var searchRecycler: RecyclerView
     private lateinit var historyRecycler: RecyclerView
     private lateinit var searchHistory: ConstraintLayout
-    private lateinit var clearHistory: Button
     private lateinit var placeholder: LinearLayout
     private lateinit var placeholderText: TextView
     private lateinit var placeholderExtraText: TextView
     private lateinit var placeholderImage: ImageView
     private lateinit var refreshBtn: Button
-    private lateinit var progressBar: ProgressBar
     private var isClickAllowed = true
     private lateinit var onClickDebounce: (Boolean) -> Unit
     private lateinit var onSearchDebounce: (String) -> Unit
@@ -55,7 +52,7 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
@@ -68,20 +65,18 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
         searchRecycler = binding.recyclerView
         historyRecycler = binding.historyRecycler
         searchHistory = binding.searchHistory
-        clearHistory = binding.clearHistory
         placeholder = binding.placeholder
         placeholderText = binding.placeholderText
+        refreshBtn = binding.refreshBtn
         placeholderExtraText = binding.placeholderExtraText
         placeholderImage = binding.placeholderImage
-        refreshBtn = binding.refreshBtn
-        progressBar = binding.progressBar
 
-        onClickDebounce = debounce(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) {
+        onClickDebounce = debounce(CLICK_DEBOUNCE_DELAY_MILLIS, viewLifecycleOwner.lifecycleScope, false) {
             isClickAllowed = true
         }
 
         onSearchDebounce =
-            debounce(SEARCH_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, true) {
+            debounce(SEARCH_DEBOUNCE_DELAY_MILLIS, viewLifecycleOwner.lifecycleScope, true) {
                 if (it.isNotEmpty()) {
                     vm.getTrack(it)
                 }
@@ -93,7 +88,7 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
 
         vm.returnScreenState().observe(viewLifecycleOwner) {
             searchRecycler.isVisible = false
-            progressBar.isVisible = false
+            binding.progressBar.isVisible = false
             placeholder.isVisible = false
             searchHistory.isVisible = false
             isClickAllowed = it.isClickAllowed
@@ -105,7 +100,7 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
                 }
 
                 SearchState.LOADING_STATE -> {
-                    progressBar.isVisible = true
+                    binding.progressBar.isVisible = true
                 }
 
                 SearchState.NOTHING_FOUND -> {
@@ -152,7 +147,7 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
             vm.loadHistory()
         }
 
-        clearHistory.setOnClickListener {
+        binding.clearHistory.setOnClickListener {
             trackAdapter.clearAdapter()
             vm.clearHistoryList()
         }
@@ -185,7 +180,7 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
         }
     }
 
-    override fun onClick(track: Track) {
+    private fun onClick(track: Track) {
         if (isClickAllowed) {
             isClickAllowed = false
             onClickDebounce(isClickAllowed)
@@ -203,8 +198,8 @@ class SearchFragment : Fragment(), TrackAdapter.AdapterListener {
     }
 
     companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
+        private const val CLICK_DEBOUNCE_DELAY_MILLIS = 1000L
         private const val SAVE_INPUT = "SAVE_INPUT"
         const val TRACK = "TRACK"
     }

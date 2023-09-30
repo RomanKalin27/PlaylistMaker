@@ -38,7 +38,7 @@ class TrackDbConvertor {
         )
     }
 
-    fun map_added(addedTrack: AddedTrackEntity): Track {
+    fun mapAdded(addedTrack: AddedTrackEntity): Track {
         return Track(
             addedTrack.trackId,
             addedTrack.trackName,

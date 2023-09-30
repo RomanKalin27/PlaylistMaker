@@ -22,6 +22,7 @@ import com.practicum.playlistmaker.player.presentation.PlayerViewModel
 import com.practicum.playlistmaker.playlistCreator.domain.models.Playlist
 import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment
 import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment.Companion.BUNDLE_KEY
+import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment.Companion.EDIT_KEY
 import com.practicum.playlistmaker.playlistCreator.ui.NewPlaylistFragment.Companion.KEY
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.search.ui.SearchFragment.Companion.TRACK
@@ -31,7 +32,7 @@ import java.util.ArrayList
 import java.util.Locale
 
 @Suppress("DEPRECATION")
-class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.AdapterListener {
+class PlayerActivity : AppCompatActivity() {
     private val playBtn: ImageButton by lazy {
         findViewById(R.id.playBtn)
     }
@@ -114,13 +115,17 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.AdapterListener {
         }
 
         addBtn.setOnClickListener {
-            recyclerView.adapter = BottomSheetAdapter(this, playlists, this)
+            recyclerView.adapter = BottomSheetAdapter(::onPlaylistClick, playlists, this)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         newPlaylistBtn.setOnClickListener {
+            val fragment = NewPlaylistFragment()
+            val args = Bundle()
+            args.putInt(EDIT_KEY, 0)
+            fragment.arguments  = args
             supportFragmentManager.beginTransaction().apply {
-                replace(R.id.playerLayout, NewPlaylistFragment())
+                replace(R.id.playerLayout, fragment)
                 addToBackStack(null)
                 commit()
             }
@@ -130,7 +135,7 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.AdapterListener {
                 if (message !== null) {
                     showSnackbar(message)
                     vm.fillData(playlists)
-                    recyclerView.adapter = BottomSheetAdapter(this, playlists, this)
+                    recyclerView.adapter = BottomSheetAdapter(::onPlaylistClick, playlists, this)
                 }
             }
         }
@@ -199,7 +204,7 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.AdapterListener {
         country.text = track?.country
     }
 
-    override fun onPlaylistClick(playlist: Playlist) {
+    private fun onPlaylistClick(playlist: Playlist) {
         if (playlist.trackList.contains(track!!.trackId)) {
             showSnackbar(getString(R.string.hasAlreadyBeenAdded) + " " + playlist.playlistName)
         } else {
