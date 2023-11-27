@@ -24,7 +24,7 @@ class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
     private val vm by viewModel<FavoritesFragmentViewModel>()
-    private var adapter: TrackAdapter? = null
+    private val adapter by lazy {TrackAdapter(::onClick, ::onClick)}
 
     private var placeholderImage: ImageView? = null
     private var placeholderText: TextView? = null
@@ -50,8 +50,6 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = TrackAdapter(::onClick, ::onClick)
-
          placeholderImage = binding.placeholderImage
          placeholderText = binding.placeholderText
          favoritesList = binding.favoritesList
@@ -70,7 +68,6 @@ class FavoritesFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        adapter = null
         favoritesList?.adapter = null
     }
 
@@ -102,9 +99,9 @@ class FavoritesFragment : Fragment() {
         placeholderText?.visibility = View.GONE
         progressBar?.visibility = View.GONE
 
-        adapter?.clearAdapter()
-        adapter?.trackList?.addAll(tracks)
-        adapter?.notifyDataSetChanged()
+        adapter.clearAdapter()
+        adapter.trackList.addAll(tracks)
+        adapter.notifyDataSetChanged()
     }
 
     private fun onClick(track: Track) {
